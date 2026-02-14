@@ -1,4 +1,4 @@
-
+package model;
 
 public abstract class Car {
     protected String make;
@@ -7,10 +7,8 @@ public abstract class Car {
     public Car() {
     }
 
-
     public Car(String make, String model) {
         this.make = make;
         this.model = model;
-
     }
 }

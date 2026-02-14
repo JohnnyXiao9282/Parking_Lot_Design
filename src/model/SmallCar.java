@@ -1,3 +1,5 @@
+package model;
+
 public class SmallCar extends Car {
 
     public SmallCar() {
