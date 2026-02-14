@@ -32,4 +32,8 @@ public class Level {
     public void setNumberOfAvail(int numberOfAvail) {
         this.numberOfAvail = numberOfAvail;
     }
+
+    public boolean getIsFirst() {
+        return isFirst;
+    }
 }
