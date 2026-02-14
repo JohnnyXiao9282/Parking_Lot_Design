@@ -1,18 +1,18 @@
 package model;
 
-public class SmallCar extends Car {
+public class LargeCar extends Car {
 
-    public SmallCar() {
+    public LargeCar() {
         super();
     }
 
-    public SmallCar(String make, String model) {
+    public LargeCar(String make, String model) {
         super(make, model);
     }
     
     @Override
     public boolean Park(Level level) {
-        if (!level.getIsFirst()) {
+        if (level.getIsFirst()) {
             return false;
         }
         if (!level.hasSpot()){
