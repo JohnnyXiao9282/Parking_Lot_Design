@@ -1,5 +1,8 @@
 package model;
 
+import exceptions.AmountNotEnoughException;
+import exceptions.IllegalTransactionException;
+
 public class SmallCar extends Car {
 
     public SmallCar() {
@@ -12,6 +15,9 @@ public class SmallCar extends Car {
     
     @Override
     public boolean Park(Level level) {
+        if (isParked) {
+            return false;
+        }
         if (!level.getIsFirst()) {
             return false;
         }
@@ -20,6 +26,76 @@ public class SmallCar extends Car {
         }
         int currentAvail = level.getNumberOfAvail();
         level.setNumberOfAvail(currentAvail - 1);
+        isParked = true;
         return true;
+    }
+
+    @Override
+    public boolean payWithCard(double amount, double actual) throws AmountNotEnoughException, IllegalTransactionException{
+        try {
+            if (actual >= 10000){
+                throw new IllegalTransactionException();
+            }
+            if (actual < amount){
+                throw new AmountNotEnoughException();
+            }
+        } catch (IllegalTransactionException ie) {
+            return false;
+        } catch (AmountNotEnoughException ae) {
+            return false;
+        }
+        return true;
+
+    }
+
+    @Override
+    public boolean payWithCash(double amount, double actual) throws AmountNotEnoughException, IllegalTransactionException{
+        try {
+            if (actual >= 10000){
+                throw new IllegalTransactionException();
+            }
+            if (actual < amount){
+                throw new AmountNotEnoughException();
+            }
+        } catch (IllegalTransactionException ie) {
+            return false;
+        } catch (AmountNotEnoughException ae) {
+            return false;
+        }
+        return true;
+
+    }
+
+    @Override
+    public boolean leave(double amount, double actual, Level level) {
+        if (!isParked) {
+            return false;
+        }
+        boolean paid = false;
+        try {
+            paid = payWithCard(amount, actual);
+        } catch (IllegalTransactionException ie) {
+            paid = false;
+        } catch (AmountNotEnoughException ae) {
+            paid = false;
+        }
+        if (!paid){
+            try {
+                paid = payWithCash(amount, actual);
+            } catch (IllegalTransactionException ie) {
+                paid = false;
+            } catch (AmountNotEnoughException ae) {
+                paid = false;
+            }
+        }
+        if (!paid){
+            return false;
+        } else{
+            int currentAvail = level.getNumberOfAvail();
+            level.setNumberOfAvail(currentAvail + 1);
+            isParked = false;
+            return true;
+        }
+        
     }
 }
