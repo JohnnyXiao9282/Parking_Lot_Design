@@ -1,8 +1,8 @@
 package exceptions;
 
-public class amountNotEnoughException extends Exception {
+public class AmountNotEnoughException extends Exception {
     
-    public amountNotEnoughException() {
+    public AmountNotEnoughException() {
         System.out.println("Your remaining amount is not enough");
     }
 }

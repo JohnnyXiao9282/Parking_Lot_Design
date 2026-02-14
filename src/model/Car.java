@@ -1,6 +1,6 @@
 package model;
 
-public abstract class Car {
+public abstract class Car implements Payment {
     protected String make;
     protected String model;
 
@@ -13,5 +13,7 @@ public abstract class Car {
     }
 
     public abstract boolean Park(Level level);
+
+    public abstract boolean leave(double amount, double actual, Level level);
 
 }
