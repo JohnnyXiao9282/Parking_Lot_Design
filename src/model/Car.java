@@ -11,4 +11,7 @@ public abstract class Car {
         this.make = make;
         this.model = model;
     }
+
+    public abstract boolean Park(Level level);
+
 }
