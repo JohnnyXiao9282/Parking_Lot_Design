@@ -15,6 +15,9 @@ public class LargeCar extends Car {
     
     @Override
     public boolean Park(Level level) {
+        if (isParked) {
+            return false;
+        }
         if (level.getIsFirst()) {
             return false;
         }
@@ -23,6 +26,7 @@ public class LargeCar extends Car {
         }
         int currentAvail = level.getNumberOfAvail();
         level.setNumberOfAvail(currentAvail - 1);
+        isParked = true;
         return true;
     }
 
@@ -66,6 +70,9 @@ public class LargeCar extends Car {
  
     @Override
     public boolean leave(double amount, double actual, Level level) {
+        if (!isParked) {
+            return false;
+        }
         boolean paid = false;
         try {
             paid = payWithCard(amount, actual);
@@ -82,9 +89,11 @@ public class LargeCar extends Car {
         if (paid) {
             int spots = level.getNumberOfAvail();
             level.setNumberOfAvail(spots + 1);
+            isParked = false;
             return true;
         } else {
             return false;
         }
+        
     }
 }
