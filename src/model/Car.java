@@ -4,6 +4,8 @@ public abstract class Car implements Payment {
     protected String make;
     protected String model;
     protected boolean isParked;
+    protected int hourlyRate;
+    protected int hours;
 
     public Car() {
     }
@@ -14,6 +16,12 @@ public abstract class Car implements Payment {
         this.isParked = false;
     }
 
-    public abstract boolean Park(Level level);
-    public abstract boolean leave(double amount, double actual, Level level);
+    @Override
+    public int calculateAmount(int duration) {
+        return this.hourlyRate * duration;
+    }
+
+
+    public abstract boolean park(Level level);
+    public abstract boolean leave(Level level);
 }

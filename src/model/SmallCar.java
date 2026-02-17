@@ -2,6 +2,7 @@ package model;
 
 import exceptions.AmountNotEnoughException;
 import exceptions.IllegalTransactionException;
+import ui.Receipt;
 
 public class SmallCar extends Car {
 
@@ -11,10 +12,11 @@ public class SmallCar extends Car {
 
     public SmallCar(String make, String model) {
         super(make, model);
+        this.hourlyRate = 5;
     }
     
     @Override
-    public boolean Park(Level level) {
+    public boolean park(Level level) {
         if (isParked) {
             return false;
         }
@@ -67,13 +69,16 @@ public class SmallCar extends Car {
     }
 
     @Override
-    public boolean leave(double amount, double actual, Level level) {
+    public boolean leave(double actual, Level level) {
         if (!isParked) {
             return false;
         }
+        double amount = calculateAmount(this.hours);
         boolean paid = false;
+        boolean iscard = false;
         try {
             paid = payWithCard(amount, actual);
+            iscard = true;
         } catch (IllegalTransactionException ie) {
             paid = false;
         } catch (AmountNotEnoughException ae) {
@@ -91,9 +96,11 @@ public class SmallCar extends Car {
         if (!paid){
             return false;
         } else{
+            new Receipt(this.hours, amount, this.make, this.model, iscard);
             int currentAvail = level.getNumberOfAvail();
             level.setNumberOfAvail(currentAvail + 1);
             isParked = false;
+            this.hours = 0;
             return true;
         }
         
