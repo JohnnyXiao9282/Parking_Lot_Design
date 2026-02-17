@@ -15,7 +15,7 @@ public class SmallCar extends Car {
     }
     
     @Override
-    public boolean Park(Level level) {
+    public boolean park(Level level) {
         if (isParked) {
             return false;
         }
@@ -68,11 +68,11 @@ public class SmallCar extends Car {
     }
 
     @Override
-    public boolean leave(int duration, double actual, Level level) {
+    public boolean leave(double actual, Level level) {
         if (!isParked) {
             return false;
         }
-        double amount = calculateAmount(duration);
+        double amount = calculateAmount(this.hours);
         boolean paid = false;
         try {
             paid = payWithCard(amount, actual);
@@ -96,6 +96,7 @@ public class SmallCar extends Car {
             int currentAvail = level.getNumberOfAvail();
             level.setNumberOfAvail(currentAvail + 1);
             isParked = false;
+            this.hours = 0;
             return true;
         }
         

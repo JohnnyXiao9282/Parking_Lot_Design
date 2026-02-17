@@ -5,6 +5,7 @@ public abstract class Car implements Payment {
     protected String model;
     protected boolean isParked;
     protected int hourlyRate;
+    protected int hours;
 
     public Car() {
     }
@@ -21,6 +22,6 @@ public abstract class Car implements Payment {
     }
 
 
-    public abstract boolean Park(Level level);
-    public abstract boolean leave(int duration, double actual, Level level);
+    public abstract boolean park(Level level);
+    public abstract boolean leave(double actual, Level level);
 }

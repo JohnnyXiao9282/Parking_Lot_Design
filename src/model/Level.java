@@ -13,7 +13,7 @@ public class Level {
 
     public Level(boolean isFirst, int numberOfSpots) {
         spots = new ArrayList<>(numberOfSpots);
-        this.numberOfAvail = spots.size();
+        this.numberOfAvail = numberOfSpots;
         boolean forSmall = (isFirst)? true : false;
 
         for (ParkingSpot spot : this.spots) {
@@ -22,7 +22,7 @@ public class Level {
     }
 
     public boolean hasSpot() {
-        return numberOfAvail > 0;
+        return this.numberOfAvail > 0;
     }
     
     public int getNumberOfAvail() {

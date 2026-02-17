@@ -2,6 +2,7 @@ package model;
 
 import exceptions.AmountNotEnoughException;
 import exceptions.IllegalTransactionException;
+import ui.Menu;
 
 public class LargeCar extends Car {
 
@@ -15,7 +16,7 @@ public class LargeCar extends Car {
     }
     
     @Override
-    public boolean Park(Level level) {
+    public boolean park(Level level) {
         if (isParked) {
             return false;
         }
@@ -25,6 +26,9 @@ public class LargeCar extends Car {
         if (!level.hasSpot()){
             return false;
         }
+        Menu m = new Menu();
+        this.hours = m.getHours();
+
         int currentAvail = level.getNumberOfAvail();
         level.setNumberOfAvail(currentAvail - 1);
         isParked = true;
@@ -70,11 +74,11 @@ public class LargeCar extends Car {
     }
  
     @Override
-    public boolean leave(int duration, double actual, Level level) {
+    public boolean leave(double actual, Level level) {
         if (!isParked) {
             return false;
         }
-        double amount = calculateAmount(duration);
+        double amount = calculateAmount(this.hours);
         boolean paid = false;
         try {
             paid = payWithCard(amount, actual);
@@ -91,6 +95,7 @@ public class LargeCar extends Car {
         if (paid) {
             int spots = level.getNumberOfAvail();
             level.setNumberOfAvail(spots + 1);
+            this.hours = 0;
             isParked = false;
             return true;
         } else {
