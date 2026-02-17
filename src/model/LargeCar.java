@@ -28,7 +28,6 @@ public class LargeCar extends Car {
         }
         Menu m = new Menu();
         this.hours = m.getHours();
-
         int currentAvail = level.getNumberOfAvail();
         level.setNumberOfAvail(currentAvail - 1);
         this.isParked = true;

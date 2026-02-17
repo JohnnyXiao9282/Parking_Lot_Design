@@ -2,6 +2,7 @@ package model;
 
 import exceptions.AmountNotEnoughException;
 import exceptions.IllegalTransactionException;
+import ui.Menu;
 import ui.Receipt;
 
 public class SmallCar extends Car {
@@ -25,6 +26,8 @@ public class SmallCar extends Car {
         if (!level.hasSpot()){
             return false;
         }
+        Menu m = new Menu();
+        this.hours = m.getHours();
         int currentAvail = level.getNumberOfAvail();
         level.setNumberOfAvail(currentAvail - 1);
         isParked = true;
