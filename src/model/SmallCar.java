@@ -11,6 +11,7 @@ public class SmallCar extends Car {
 
     public SmallCar(String make, String model) {
         super(make, model);
+        this.hourlyRate = 5;
     }
     
     @Override
@@ -67,10 +68,11 @@ public class SmallCar extends Car {
     }
 
     @Override
-    public boolean leave(double amount, double actual, Level level) {
+    public boolean leave(int duration, double actual, Level level) {
         if (!isParked) {
             return false;
         }
+        double amount = calculateAmount(duration);
         boolean paid = false;
         try {
             paid = payWithCard(amount, actual);
