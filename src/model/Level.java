@@ -14,6 +14,7 @@ public class Level {
     public Level(boolean isFirst, int numberOfSpots) {
         spots = new ArrayList<>(numberOfSpots);
         this.numberOfAvail = numberOfSpots;
+        this.isFirst = isFirst;
         boolean forSmall = (isFirst)? true : false;
 
         for (ParkingSpot spot : this.spots) {
