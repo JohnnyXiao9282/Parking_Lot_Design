@@ -11,8 +11,7 @@ public class SmallCar extends Car {
     }
 
     public SmallCar(String make, String model) {
-        super(make, model);
-        this.hourlyRate = 5;
+        super(make, model, 5);
     }
     
     @Override

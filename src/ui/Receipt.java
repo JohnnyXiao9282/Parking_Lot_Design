@@ -34,7 +34,7 @@ public class Receipt {
         System.out.println("Duration: " + duration + " hours");
         System.out.println("Total Amount: $" + price);
         System.out.println("Payment Method: " + paymentMethod);
-        System.out.println("--Thank you for parking with us!--");
+        System.out.println("------Thank you for parking!------");
     }
 
     public boolean getIsCard() {
