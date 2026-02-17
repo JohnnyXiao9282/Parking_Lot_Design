@@ -32,7 +32,7 @@ public class LargeCar extends Car {
 
         int currentAvail = level.getNumberOfAvail();
         level.setNumberOfAvail(currentAvail - 1);
-        isParked = true;
+        this.isParked = true;
         return true;
     }
 
@@ -100,8 +100,6 @@ public class LargeCar extends Car {
                 paid = false;
             }
         }
-        // if (!paid && !iscard) {
-        // }
         if (paid) {
             // print receipt after successful payment
             r.printReceipt(this.hours, amount, this.make, this.model); 

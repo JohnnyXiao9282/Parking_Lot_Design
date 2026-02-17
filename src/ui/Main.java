@@ -11,7 +11,6 @@ public class Main {
 		Car c2 = new SmallCar();
 		c1.park(second);
 		// c2.park(first);
-		c2.leave()
-
+		c1.leave(second);
 	}
 }

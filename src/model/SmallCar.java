@@ -69,34 +69,34 @@ public class SmallCar extends Car {
     }
 
     @Override
-    public boolean leave(double actual, Level level) {
+    public boolean leave(Level level) {
         if (!isParked) {
             return false;
         }
         double amount = calculateAmount(this.hours);
         boolean paid = false;
-        boolean iscard = false;
-        try {
-            paid = payWithCard(amount, actual);
-            iscard = true;
-        } catch (IllegalTransactionException ie) {
-            paid = false;
-        } catch (AmountNotEnoughException ae) {
-            paid = false;
-        }
-        if (!paid){
+        Receipt r = new Receipt(amount);
+        boolean iscard = r.getIsCard(); // payment method chosen by user
+        double actual = r.getAmount(); // amount paid by user
+        if (iscard) { 
+            try {
+                paid = payWithCard(amount, actual);
+                iscard = true;
+            } catch (AmountNotEnoughException | IllegalTransactionException e) {
+                paid = false;
+            }
+        } else {
+            // if card payment failed and user chose cash paymen
             try {
                 paid = payWithCash(amount, actual);
-            } catch (IllegalTransactionException ie) {
-                paid = false;
-            } catch (AmountNotEnoughException ae) {
+            } catch (AmountNotEnoughException | IllegalTransactionException e) {
                 paid = false;
             }
         }
         if (!paid){
             return false;
         } else{
-            new Receipt(this.hours, amount, this.make, this.model, iscard);
+            r.printReceipt(hourlyRate, actual, make, model);
             int currentAvail = level.getNumberOfAvail();
             level.setNumberOfAvail(currentAvail + 1);
             isParked = false;
