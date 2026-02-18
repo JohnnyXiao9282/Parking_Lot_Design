@@ -100,7 +100,7 @@ public class LargeCar extends Car {
         }
         if (paid) {
             // print receipt after successful payment
-            r.printReceipt(this.hours, amount, this.make, this.model); 
+            r.printReceipt(); 
             int spots = level.getNumberOfAvail();
             level.setNumberOfAvail(spots + 1);
             this.hours = 0;

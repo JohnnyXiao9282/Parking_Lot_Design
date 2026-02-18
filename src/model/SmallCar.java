@@ -98,7 +98,7 @@ public class SmallCar extends Car {
         if (!paid){
             return false;
         } else{
-            r.printReceipt(hourlyRate, actual, make, model);
+            r.printReceipt();
             int currentAvail = level.getNumberOfAvail();
             level.setNumberOfAvail(currentAvail + 1);
             isParked = false;
