@@ -3,6 +3,7 @@ package model;
 import exceptions.AmountNotEnoughException;
 import exceptions.IllegalTransactionException;
 import ui.Menu;
+import ui.Receipt;
 
 public class LargeCar extends Car {
 
@@ -11,8 +12,7 @@ public class LargeCar extends Car {
     }
 
     public LargeCar(String make, String model) {
-        super(make, model);
-        this.hourlyRate = 10;
+        super(make, model, 10);
     }
     
     @Override
@@ -28,10 +28,9 @@ public class LargeCar extends Car {
         }
         Menu m = new Menu();
         this.hours = m.getHours();
-
         int currentAvail = level.getNumberOfAvail();
         level.setNumberOfAvail(currentAvail - 1);
-        isParked = true;
+        this.isParked = true;
         return true;
     }
 
@@ -74,18 +73,25 @@ public class LargeCar extends Car {
     }
  
     @Override
-    public boolean leave(double actual, Level level) {
+    public boolean leave(Level level) {
         if (!isParked) {
             return false;
         }
         double amount = calculateAmount(this.hours);
         boolean paid = false;
-        try {
-            paid = payWithCard(amount, actual);
-        } catch (AmountNotEnoughException | IllegalTransactionException e) {
-            paid = false;
-        }
-        if (!paid) {
+        Receipt r = new Receipt(amount, false, this.hours, this.make, this.model);
+        boolean iscard = r.getIsCard(); // payment method chosen by user
+        double actual = r.getAmount(); // amount paid by user
+        // if user chose card payment
+        if (iscard) { 
+            try {
+                paid = payWithCard(amount, actual);
+                iscard = true;
+            } catch (AmountNotEnoughException | IllegalTransactionException e) {
+                paid = false;
+            }
+        } else {
+            // if card payment failed and user chose cash paymen
             try {
                 paid = payWithCash(amount, actual);
             } catch (AmountNotEnoughException | IllegalTransactionException e) {
@@ -93,6 +99,8 @@ public class LargeCar extends Car {
             }
         }
         if (paid) {
+            // print receipt after successful payment
+            r.printReceipt(); 
             int spots = level.getNumberOfAvail();
             level.setNumberOfAvail(spots + 1);
             this.hours = 0;

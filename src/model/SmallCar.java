@@ -2,6 +2,8 @@ package model;
 
 import exceptions.AmountNotEnoughException;
 import exceptions.IllegalTransactionException;
+import ui.Menu;
+import ui.Receipt;
 
 public class SmallCar extends Car {
 
@@ -10,8 +12,7 @@ public class SmallCar extends Car {
     }
 
     public SmallCar(String make, String model) {
-        super(make, model);
-        this.hourlyRate = 5;
+        super(make, model, 5);
     }
     
     @Override
@@ -25,6 +26,8 @@ public class SmallCar extends Car {
         if (!level.hasSpot()){
             return false;
         }
+        Menu m = new Menu();
+        this.hours = m.getHours();
         int currentAvail = level.getNumberOfAvail();
         level.setNumberOfAvail(currentAvail - 1);
         isParked = true;
@@ -68,31 +71,34 @@ public class SmallCar extends Car {
     }
 
     @Override
-    public boolean leave(double actual, Level level) {
+    public boolean leave(Level level) {
         if (!isParked) {
             return false;
         }
         double amount = calculateAmount(this.hours);
         boolean paid = false;
-        try {
-            paid = payWithCard(amount, actual);
-        } catch (IllegalTransactionException ie) {
-            paid = false;
-        } catch (AmountNotEnoughException ae) {
-            paid = false;
-        }
-        if (!paid){
+        Receipt r = new Receipt(amount, true, this.hours, this.make, this.model);
+        boolean iscard = r.getIsCard(); // payment method chosen by user
+        double actual = r.getAmount(); // amount paid by user
+        if (iscard) { 
+            try {
+                paid = payWithCard(amount, actual);
+                iscard = true;
+            } catch (AmountNotEnoughException | IllegalTransactionException e) {
+                paid = false;
+            }
+        } else {
+            // if card payment failed and user chose cash paymen
             try {
                 paid = payWithCash(amount, actual);
-            } catch (IllegalTransactionException ie) {
-                paid = false;
-            } catch (AmountNotEnoughException ae) {
+            } catch (AmountNotEnoughException | IllegalTransactionException e) {
                 paid = false;
             }
         }
         if (!paid){
             return false;
         } else{
+            r.printReceipt();
             int currentAvail = level.getNumberOfAvail();
             level.setNumberOfAvail(currentAvail + 1);
             isParked = false;

@@ -10,10 +10,19 @@ public abstract class Car implements Payment {
     public Car() {
     }
 
-    public Car(String make, String model) {
+    public Car(String make, String model, int hourlyRate) {
         this.make = make;
         this.model = model;
+        this.hourlyRate = hourlyRate;
         this.isParked = false;
+    }
+
+    public String getMake() {
+        return make;
+    }
+    
+    public String getModel() {
+        return model;
     }
 
     @Override
@@ -23,5 +32,5 @@ public abstract class Car implements Payment {
 
 
     public abstract boolean park(Level level);
-    public abstract boolean leave(double actual, Level level);
+    public abstract boolean leave(Level level);
 }
