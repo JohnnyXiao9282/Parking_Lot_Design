@@ -9,7 +9,8 @@ public class Receipt {
     private double amount;
     private Car car;
     private int duration;
-    public Receipt(double price, boolean isSmall, String make, String model) {
+    public Receipt(double price, boolean isSmall, int duration, String make, String model) {
+        this.duration = duration;
         if (isSmall) {
             car = new SmallCar(make, model);
         } else {
