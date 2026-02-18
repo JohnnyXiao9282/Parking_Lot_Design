@@ -36,7 +36,7 @@ public class Receipt {
         this.amount = scanner.nextDouble();
     }
 
-    public void printReceipt(int duration, double price, String make, String model) {
+    public void printReceipt() {
         String paymentMethod = isCard ? "Card" : "Cash";
         System.out.println("-------------Receipt:-------------");
         System.out.println("Car: " + car.getMake() + " " + car.getModel());
