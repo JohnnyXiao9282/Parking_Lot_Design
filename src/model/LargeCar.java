@@ -79,7 +79,7 @@ public class LargeCar extends Car {
         }
         double amount = calculateAmount(this.hours);
         boolean paid = false;
-        Receipt r = new Receipt(amount);
+        Receipt r = new Receipt(amount, false, this.make, this.model);
         boolean iscard = r.getIsCard(); // payment method chosen by user
         double actual = r.getAmount(); // amount paid by user
         // if user chose card payment

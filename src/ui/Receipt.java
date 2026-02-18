@@ -2,13 +2,22 @@ package ui;
 
 import java.util.Scanner;
 
+import model.*;;
+
 public class Receipt {
     private boolean isCard;
     private double amount;
-    public Receipt(double price) {
-        process(price);
+    private Car car;
+    private int duration;
+    public Receipt(double price, boolean isSmall, String make, String model) {
+        if (isSmall) {
+            car = new SmallCar(make, model);
+        } else {
+            car = new LargeCar(make, model);
+        }
+        handlePayment(price);
     }
-    public void process(double price) {
+    public void handlePayment(double price) {
         System.out.println("Please choose your payment option:");
         System.out.println("1.Cash   2.Card");
         Scanner scanner = new Scanner(System.in);
@@ -30,9 +39,9 @@ public class Receipt {
     public void printReceipt(int duration, double price, String make, String model) {
         String paymentMethod = isCard ? "Card" : "Cash";
         System.out.println("-------------Receipt:-------------");
-        System.out.println("Car: " + make + " " + model);
+        System.out.println("Car: " + car.getMake() + " " + car.getModel());
         System.out.println("Duration: " + duration + " hours");
-        System.out.println("Total Amount: $" + price);
+        System.out.println("Total Amount: $" + amount);
         System.out.println("Payment Method: " + paymentMethod);
         System.out.println("------Thank you for parking!------");
     }

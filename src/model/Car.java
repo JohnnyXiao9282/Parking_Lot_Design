@@ -17,6 +17,14 @@ public abstract class Car implements Payment {
         this.isParked = false;
     }
 
+    public String getMake() {
+        return make;
+    }
+    
+    public String getModel() {
+        return model;
+    }
+
     @Override
     public int calculateAmount(int duration) {
         return this.hourlyRate * duration;
