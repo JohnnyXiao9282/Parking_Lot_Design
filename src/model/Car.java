@@ -24,6 +24,9 @@ public abstract class Car implements Payment {
     public String getModel() {
         return model;
     }
+    public int getHours() {
+        return hours;
+    }
 
     @Override
     public int calculateAmount(int duration) {

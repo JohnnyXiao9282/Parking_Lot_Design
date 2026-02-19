@@ -8,9 +8,8 @@ public class Receipt {
     private boolean isCard;
     private double amount;
     private Car car;
-    private int duration;
-    public Receipt(double price, boolean isSmall, int duration, String make, String model) {
-        this.duration = duration;
+    
+    public Receipt(double price, boolean isSmall, String make, String model) {
         if (isSmall) {
             car = new SmallCar(make, model);
         } else {
@@ -18,6 +17,7 @@ public class Receipt {
         }
         handlePayment(price);
     }
+
     public void handlePayment(double price) {
         System.out.println("Please choose your payment option:");
         System.out.println("1.Cash   2.Card");
@@ -41,8 +41,8 @@ public class Receipt {
         String paymentMethod = isCard ? "Card" : "Cash";
         System.out.println("-------------Receipt:-------------");
         System.out.println("Car: " + car.getMake() + " " + car.getModel());
-        System.out.println("Duration: " + duration + " hours");
-        System.out.println("Total Amount: $" + amount);
+        System.out.println("Duration: " + car.getHours() + " hours");
+        System.out.println("Total Amount: $" + car.calculateAmount(car.getHours()));
         System.out.println("Payment Method: " + paymentMethod);
         System.out.println("------Thank you for parking!------");
     }
