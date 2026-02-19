@@ -3,15 +3,13 @@ package model;
 
 import org.junit.Test;
 
-// ...existing code...
 
 import static org.junit.Assert.*;
-// ...existing code...
 
 public class CarTest {
-    // Public no-arg constructor for JUnit 4
+    
     public CarTest() {}
-    // Example concrete Car subclass for testing
+    
     static class TestCar extends Car {
         public TestCar(String make, String model, int hourlyRate) {
             super(make, model, hourlyRate);
