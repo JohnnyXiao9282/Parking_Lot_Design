@@ -87,6 +87,7 @@ public class MenuGUI extends JFrame {
                     sb.append("------Thank you for parking!------");
                     JOptionPane.showMessageDialog(this, sb.toString(), "Thank You", JOptionPane.INFORMATION_MESSAGE);
                     paid = true;
+                    System.exit(0);
                 } catch (AmountNotEnoughException ex) {
                     JOptionPane.showMessageDialog(this, "Amount is not enough to pay for the parking fee. Please try again.", "Payment Error", JOptionPane.ERROR_MESSAGE);
                 } catch (OverPaymentException ex) {
@@ -99,6 +100,7 @@ public class MenuGUI extends JFrame {
             } else {
                 // User cancelled
                 paid = true;
+                System.exit(0);
             }
         }
     }
