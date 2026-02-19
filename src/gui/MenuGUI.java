@@ -1,10 +1,10 @@
 package gui;
 
-import javax.swing.*;
-import java.awt.*;
 import exceptions.AmountNotEnoughException;
 import exceptions.IllegalTransactionException;
 import exceptions.OverPaymentException;
+import java.awt.*;
+import javax.swing.*;
 
 public class MenuGUI extends JFrame {
     private JComboBox<String> carTypeCombo;
@@ -36,7 +36,7 @@ public class MenuGUI extends JFrame {
             try {
                 enteredHours = Integer.parseInt(hoursField.getText());
                 String carTypeStr = (selectedCarType == 1 ? "Small Car" : "Large Car");
-                double price = selectedCarType == 1 ? 10 * enteredHours : 15 * enteredHours;
+                double price = selectedCarType == 1 ? 5 * enteredHours : 10 * enteredHours;
                 // Show receipt and payment dialog
                 showReceiptDialog(carTypeStr, enteredHours, price);
             } catch (NumberFormatException ex) {
@@ -59,7 +59,7 @@ public class MenuGUI extends JFrame {
             String[] payOptions = {"Cash", "Card"};
             JComboBox<String> payTypeCombo = new JComboBox<>(payOptions);
             panel.add(payTypeCombo);
-            panel.add(new JLabel("Please enter the amount paid:"));
+            panel.add(new JLabel("To pay, please enter the amount:"));
             JTextField amountField = new JTextField();
             panel.add(amountField);
 
