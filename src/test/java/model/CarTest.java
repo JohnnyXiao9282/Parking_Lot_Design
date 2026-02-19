@@ -24,6 +24,7 @@ public class CarTest {
         public boolean payWithCash(double amount, double actual) { return true; }
     }
 
+ 
     @Test
     public void testCalculateAmount() {
         Car car = new TestCar("Toyota", "Corolla", 10);
