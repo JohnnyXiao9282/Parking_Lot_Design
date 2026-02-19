@@ -2,6 +2,8 @@ package model;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import model.Car;
+import model.Level;
 
 public class CarTest {
     static class TestCar extends Car {
