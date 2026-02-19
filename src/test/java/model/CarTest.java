@@ -1,8 +1,15 @@
-package test.java.model;
+
+package model;
 
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import model.Car;
+import model.Level;
+import exceptions.AmountNotEnoughException;
+import exceptions.IllegalTransactionException;
+import exceptions.OverPaymentException;
 // ...existing code...
 
 public class CarTest {
