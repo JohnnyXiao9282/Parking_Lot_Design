@@ -1,15 +1,9 @@
-
 package model;
 
 import org.junit.Test;
-
-
 import static org.junit.Assert.*;
 
 public class CarTest {
-    
-    public CarTest() {}
-    
     static class TestCar extends Car {
         public TestCar(String make, String model, int hourlyRate) {
             super(make, model, hourlyRate);
@@ -24,11 +18,10 @@ public class CarTest {
         public boolean payWithCash(double amount, double actual) { return true; }
     }
 
- 
     @Test
     public void testCalculateAmount() {
-        Car car = new TestCar("Toyota", "Corolla", 10);
-        assertEquals(50, car.calculateAmount(5));
+        Car car = new TestCar("Toyota", "Corolla", 5);
+        assertEquals(25, car.calculateAmount(5));
     }
 
     @Test
