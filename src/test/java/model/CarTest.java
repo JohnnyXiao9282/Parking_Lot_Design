@@ -1,7 +1,15 @@
+
 package model;
+
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import model.Car;
+import model.Level;
+import exceptions.AmountNotEnoughException;
+import exceptions.IllegalTransactionException;
+import exceptions.OverPaymentException;
 // ...existing code...
 
 public class CarTest {
@@ -14,9 +22,9 @@ public class CarTest {
         @Override
         public boolean leave(Level level) { return true; }
         @Override
-        public boolean payWithCard(double amount, double actual) { return true; }
+        public boolean payWithCard(double amount, double actual) throws AmountNotEnoughException, IllegalTransactionException, OverPaymentException { return true; }
         @Override
-        public boolean payWithCash(double amount, double actual) { return true; }
+        public boolean payWithCash(double amount, double actual) throws AmountNotEnoughException, IllegalTransactionException, OverPaymentException { return true; }
     }
 
     @Test
