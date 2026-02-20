@@ -4,6 +4,10 @@ import model.*;
 
 public class Main {
 	public static void main(String[] args) {
+		// Call Admin inspection on startup
+		Admin admin = new Admin();
+		admin.inspect();
+
 		ParkingLot lot = new ParkingLot();
 		Level first = lot.getFirstLevel();
 		Level second = lot.getSecdonLevel();
