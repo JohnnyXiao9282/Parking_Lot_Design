@@ -15,6 +15,10 @@ public class LargeCar extends Car {
         super(make, model, 10);
     }
     
+    public boolean getIsParked() {
+        return isParked;
+    }
+    
     @Override
     public boolean park(Level level) {
         if (isParked) {
