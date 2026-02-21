@@ -9,7 +9,7 @@ public class SmallCarTest {
     @Test 
     public void testCalculateAmount() {
         SmallCar car = new SmallCar("Toyota", "Corolla");
-        assertEquals(15, car.calculateAmount(5));
+        assertEquals(25, car.calculateAmount(5));
     }
     @Test
     public void testConstructor() {
