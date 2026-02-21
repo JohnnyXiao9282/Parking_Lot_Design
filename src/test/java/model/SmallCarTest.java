@@ -20,7 +20,7 @@ public class SmallCarTest {
     }
 
     @Test
-    public void testPark() {
+    public void testParkRightLevel() {
         SmallCar car = new SmallCar("Toyota", "Corolla");
         ParkingLot lot = new ParkingLot();
         Level firstLevel = lot.getFirstLevel();
@@ -28,6 +28,17 @@ public class SmallCarTest {
         assertTrue(car.park(firstLevel));
         assertEquals(before - 1, firstLevel.getNumberOfAvail());
         assertTrue(car.getIsParked());
+    }
+
+    @Test
+    public void testParkWrongLevel() {
+        SmallCar car = new SmallCar("Toyota", "Corolla");
+        ParkingLot lot = new ParkingLot();
+        Level secondLevel = lot.getSecondLevel();
+        int before = secondLevel.getNumberOfAvail();
+        assertFalse(car.park(secondLevel));
+        assertEquals(before, secondLevel.getNumberOfAvail());
+        assertFalse(car.getIsParked());
     }
 
     @Test

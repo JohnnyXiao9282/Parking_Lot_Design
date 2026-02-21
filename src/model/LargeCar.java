@@ -14,7 +14,7 @@ public class LargeCar extends Car {
     public LargeCar(String make, String model) {
         super(make, model, 10);
     }
-    
+
     public boolean getIsParked() {
         return isParked;
     }
@@ -30,8 +30,8 @@ public class LargeCar extends Car {
         if (!level.hasSpot()){
             return false;
         }
-        Menu m = new Menu();
-        this.hours = m.getHours();
+        // Menu m = new Menu();
+        // this.hours = m.getHours();
         int currentAvail = level.getNumberOfAvail();
         level.setNumberOfAvail(currentAvail - 1);
         this.isParked = true;
