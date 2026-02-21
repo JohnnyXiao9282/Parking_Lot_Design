@@ -14,6 +14,7 @@ public abstract class Car implements Payment {
         this.make = make;
         this.model = model;
         this.hourlyRate = hourlyRate;
+        this.hourlyRate = hourlyRate;
         this.isParked = false;
     }
 
@@ -23,6 +24,9 @@ public abstract class Car implements Payment {
     
     public String getModel() {
         return model;
+    }
+    public int getHours() {
+        return hours;
     }
 
     @Override

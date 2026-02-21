@@ -13,7 +13,7 @@ public class ParkingLot {
         return this.smallCarLevel;
     }
 
-    public Level getSecdonLevel() {
+    public Level getSecondLevel() {
         return this.largeCarLevel;
     }
     
