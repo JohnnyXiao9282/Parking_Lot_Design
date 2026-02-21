@@ -14,6 +14,10 @@ public class SmallCar extends Car {
     public SmallCar(String make, String model) {
         super(make, model, 5);
     }
+
+    public boolean getIsParked() {
+        return isParked;
+    }
     
     @Override
     public boolean park(Level level) {
@@ -26,8 +30,8 @@ public class SmallCar extends Car {
         if (!level.hasSpot()){
             return false;
         }
-        Menu m = new Menu();
-        this.hours = m.getHours();
+        // Menu m = new Menu();
+        // this.hours = m.getHours();
         int currentAvail = level.getNumberOfAvail();
         level.setNumberOfAvail(currentAvail - 1);
         isParked = true;
@@ -71,19 +75,19 @@ public class SmallCar extends Car {
     }
 
     @Override
-    public boolean leave(Level level) {
+    public boolean leave(boolean isCard, double actual, Level level) {
         if (!isParked) {
             return false;
         }
         double amount = calculateAmount(this.hours);
         boolean paid = false;
-        Receipt r = new Receipt(amount, true, this.hours, this.make, this.model);
-        boolean iscard = r.getIsCard(); // payment method chosen by user
-        double actual = r.getAmount(); // amount paid by user
-        if (iscard) { 
+        // Receipt r = new Receipt(amount, true, this.hours, this.make, this.model);
+        // boolean iscard = r.getIsCard(); // payment method chosen by user
+        // double actual = r.getAmount(); // amount paid by user
+        if (isCard) { 
             try {
                 paid = payWithCard(amount, actual);
-                iscard = true;
+                isCard = true;
             } catch (AmountNotEnoughException | IllegalTransactionException e) {
                 paid = false;
             }
@@ -98,7 +102,7 @@ public class SmallCar extends Car {
         if (!paid){
             return false;
         } else{
-            r.printReceipt();
+            // r.printReceipt();
             int currentAvail = level.getNumberOfAvail();
             level.setNumberOfAvail(currentAvail + 1);
             isParked = false;

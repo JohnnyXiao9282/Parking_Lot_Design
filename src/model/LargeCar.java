@@ -73,20 +73,20 @@ public class LargeCar extends Car {
     }
  
     @Override
-    public boolean leave(Level level) {
+    public boolean leave(boolean isCard, double actual, Level level) {
         if (!isParked) {
             return false;
         }
         double amount = calculateAmount(this.hours);
         boolean paid = false;
-        Receipt r = new Receipt(amount, false, this.hours, this.make, this.model);
-        boolean iscard = r.getIsCard(); // payment method chosen by user
-        double actual = r.getAmount(); // amount paid by user
+        // Receipt r = new Receipt(amount, false, this.hours, this.make, this.model);
+        // boolean iscard = r.getIsCard(); // payment method chosen by user
+        // double actual = r.getAmount(); // amount paid by user
         // if user chose card payment
-        if (iscard) { 
+        if (isCard) { 
             try {
                 paid = payWithCard(amount, actual);
-                iscard = true;
+                isCard = true;
             } catch (AmountNotEnoughException | IllegalTransactionException e) {
                 paid = false;
             }
@@ -100,7 +100,7 @@ public class LargeCar extends Car {
         }
         if (paid) {
             // print receipt after successful payment
-            r.printReceipt(); 
+            // r.printReceipt(); 
             int spots = level.getNumberOfAvail();
             level.setNumberOfAvail(spots + 1);
             this.hours = 0;

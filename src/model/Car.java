@@ -29,6 +29,10 @@ public abstract class Car implements Payment {
         return hours;
     }
 
+    public int getHourlyRate() {
+        return hourlyRate;
+    }
+
     @Override
     public int calculateAmount(int duration) {
         return this.hourlyRate * duration;
@@ -36,5 +40,5 @@ public abstract class Car implements Payment {
 
 
     public abstract boolean park(Level level);
-    public abstract boolean leave(Level level);
+    public abstract boolean leave(boolean isCard, double actual, Level level);
 }
