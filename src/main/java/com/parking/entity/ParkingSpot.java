@@ -29,9 +29,6 @@ public class ParkingSpot {
     @JoinColumn(name = "level_id", nullable = false)
     private Level level;
 
-    @OneToOne(mappedBy = "parkingSpot")
-    private Car car;
-
     public boolean isAvailable() {
         return !isOccupied;
     }

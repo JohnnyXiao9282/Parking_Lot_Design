@@ -34,8 +34,7 @@ public abstract class Car {
 
     private Integer parkedHours;
 
-    @ManyToOne
-    @JoinColumn(name = "parking_spot_id")
+    @Transient
     private ParkingSpot parkingSpot;
 
     public abstract boolean park(ParkingSpot spot);
