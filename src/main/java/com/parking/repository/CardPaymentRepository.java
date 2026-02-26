@@ -1,6 +1,6 @@
 package com.parking.repository;
 
-import com.parking.entity.CardPayment;
+import com.parking.service.CardPayment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.parking.entity;
+package com.parking.service;
 
 public interface Payment {
     boolean processPayment(double amount);

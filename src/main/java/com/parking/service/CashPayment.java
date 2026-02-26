@@ -1,5 +1,6 @@
-package com.parking.entity;
+package com.parking.service;
 
+import com.parking.entity.Car;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
