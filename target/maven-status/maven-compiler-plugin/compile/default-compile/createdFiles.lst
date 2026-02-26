@@ -1,8 +1,14 @@
+com\parking\repository\CardPaymentRepository.class
 com\parking\entity\InspectionRecord$InspectionStatus.class
+com\parking\repository\CarRepository.class
 com\parking\entity\Level.class
 com\parking\ParkingLotApplication.class
 com\parking\entity\Payment.class
+com\parking\repository\AdminRepository.class
+com\parking\repository\ParkingSpotRepository.class
+com\parking\repository\LevelRepository.class
 com\parking\entity\Admin$Role.class
+com\parking\repository\ParkingLotRepository.class
 com\parking\entity\CardPayment.class
 com\parking\entity\InspectionRecord.class
 com\parking\entity\LargeCar.class
@@ -10,5 +16,7 @@ com\parking\entity\CashPayment.class
 com\parking\entity\ParkingLot.class
 com\parking\entity\ParkingSpot.class
 com\parking\entity\Car.class
+com\parking\repository\InspectionRecordRepository.class
 com\parking\entity\SmallCar.class
 com\parking\entity\Admin.class
+com\parking\repository\CashPaymentRepository.class
