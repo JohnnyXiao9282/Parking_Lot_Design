@@ -1,0 +1,14 @@
+com\parking\entity\InspectionRecord$InspectionStatus.class
+com\parking\entity\Level.class
+com\parking\ParkingLotApplication.class
+com\parking\entity\Payment.class
+com\parking\entity\Admin$Role.class
+com\parking\entity\CardPayment.class
+com\parking\entity\InspectionRecord.class
+com\parking\entity\LargeCar.class
+com\parking\entity\CashPayment.class
+com\parking\entity\ParkingLot.class
+com\parking\entity\ParkingSpot.class
+com\parking\entity\Car.class
+com\parking\entity\SmallCar.class
+com\parking\entity\Admin.class
