@@ -8,21 +8,18 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LeaveService {
+public class LeaveServiceImpl implements ILeaveService {
 
     private final CarRepository carRepository;
     private final ParkingSpotRepository parkingSpotRepository;
 
-    public LeaveService(CarRepository carRepository, ParkingSpotRepository parkingSpotRepository) {
+    public LeaveServiceImpl(CarRepository carRepository, ParkingSpotRepository parkingSpotRepository) {
         this.carRepository = carRepository;
         this.parkingSpotRepository = parkingSpotRepository;
     }
 
-    /**
-     * Unparks a car by its id. Frees the occupied spot and marks the car as not parked.
-     * Returns true on success.
-     */
     @Transactional
+    @Override
     public boolean leave(Long carId) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new RuntimeException("Car not found: " + carId));

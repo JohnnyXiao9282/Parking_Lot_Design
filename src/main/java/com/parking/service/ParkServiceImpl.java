@@ -11,21 +11,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ParkService {
+public class ParkServiceImpl implements IParkService {
 
     private final CarRepository carRepository;
     private final ParkingSpotRepository parkingSpotRepository;
 
-    public ParkService(CarRepository carRepository, ParkingSpotRepository parkingSpotRepository) {
+    public ParkServiceImpl(CarRepository carRepository, ParkingSpotRepository parkingSpotRepository) {
         this.carRepository = carRepository;
         this.parkingSpotRepository = parkingSpotRepository;
     }
 
-    /**
-     * Parks a car by its id into the first available spot matching its type.
-     * Returns the assigned ParkingSpot on success.
-     */
     @Transactional
+    @Override
     public ParkingSpot park(Long carId) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new RuntimeException("Car not found: " + carId));
