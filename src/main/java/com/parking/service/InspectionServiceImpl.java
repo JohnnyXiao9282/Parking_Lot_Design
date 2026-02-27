@@ -15,29 +15,27 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class InspectionService {
+public class InspectionServiceImpl implements IAdminInspectionService {
 
     private final InspectionRecordRepository inspectionRecordRepository;
     private final ParkingLotRepository parkingLotRepository;
     private final AdminRepository adminRepository;
     private final ParkingSpotRepository parkingSpotRepository;
 
-    public InspectionService(InspectionRecordRepository inspectionRecordRepository,
-                             ParkingLotRepository parkingLotRepository,
-                             AdminRepository adminRepository,
-                             ParkingSpotRepository parkingSpotRepository) {
+    public InspectionServiceImpl(InspectionRecordRepository inspectionRecordRepository,
+                                 ParkingLotRepository parkingLotRepository,
+                                 AdminRepository adminRepository,
+                                 ParkingSpotRepository parkingSpotRepository) {
         this.inspectionRecordRepository = inspectionRecordRepository;
         this.parkingLotRepository = parkingLotRepository;
         this.adminRepository = adminRepository;
         this.parkingSpotRepository = parkingSpotRepository;
     }
 
-    /**
-     * Conducts a new inspection for the given parking lot by the given admin.
-     * Automatically counts occupied/available spots and determines status.
-     * Optionally accepts additional notes.
-     */
+    // ─── IAdminInspectionService ─────────────────────────────────────────────────
+
     @Transactional
+    @Override
     public InspectionRecord conductInspection(Long parkingLotId, Long adminId, String notes) {
         ParkingLot parkingLot = parkingLotRepository.findById(parkingLotId)
                 .orElseThrow(() -> new RuntimeException("Parking lot not found: " + parkingLotId));
@@ -54,8 +52,7 @@ public class InspectionService {
                 .count();
 
         int availableSpots = totalSpots - occupiedSpots;
-
-        InspectionStatus status = determineStatus(totalSpots, occupiedSpots, availableSpots);
+        InspectionStatus status = determineStatus(totalSpots, occupiedSpots);
 
         InspectionRecord record = new InspectionRecord();
         record.setParkingLot(parkingLot);
@@ -70,71 +67,17 @@ public class InspectionService {
         return inspectionRecordRepository.save(record);
     }
 
-    /**
-     * Retrieves all inspection records for a specific parking lot.
-     */
-    public List<InspectionRecord> getInspectionsByParkingLot(Long parkingLotId) {
-        return inspectionRecordRepository.findByParkingLotId(parkingLotId);
-    }
-
-    /**
-     * Retrieves the latest inspections for a specific parking lot (most recent first).
-     */
-    public List<InspectionRecord> getLatestInspections(Long parkingLotId) {
-        return inspectionRecordRepository.findLatestInspectionsByParkingLot(parkingLotId);
-    }
-
-    /**
-     * Retrieves all inspections conducted by a specific admin.
-     */
-    public List<InspectionRecord> getInspectionsByAdmin(Long adminId) {
-        return inspectionRecordRepository.findByInspectorId(adminId);
-    }
-
-    /**
-     * Retrieves all inspections filtered by status.
-     */
-    public List<InspectionRecord> getInspectionsByStatus(InspectionStatus status) {
-        return inspectionRecordRepository.findByStatus(status);
-    }
-
-    /**
-     * Retrieves inspections within a date/time range.
-     */
-    public List<InspectionRecord> getInspectionsByDateRange(LocalDateTime start, LocalDateTime end) {
-        if (start.isAfter(end)) {
-            throw new RuntimeException("Start time must be before end time");
-        }
-        return inspectionRecordRepository.findByInspectionTimeBetween(start, end);
-    }
-
-    /**
-     * Retrieves a single inspection record by its ID.
-     */
-    public InspectionRecord getInspectionById(Long id) {
-        return inspectionRecordRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Inspection record not found: " + id));
-    }
-
-    /**
-     * Updates the notes and/or status of an existing inspection record.
-     */
     @Transactional
+    @Override
     public InspectionRecord updateInspection(Long id, InspectionStatus newStatus, String newNotes) {
         InspectionRecord record = getInspectionById(id);
-        if (newStatus != null) {
-            record.setStatus(newStatus);
-        }
-        if (newNotes != null) {
-            record.setNotes(newNotes);
-        }
+        if (newStatus != null) record.setStatus(newStatus);
+        if (newNotes != null) record.setNotes(newNotes);
         return inspectionRecordRepository.save(record);
     }
 
-    /**
-     * Deletes an inspection record by ID.
-     */
     @Transactional
+    @Override
     public void deleteInspection(Long id) {
         if (!inspectionRecordRepository.existsById(id)) {
             throw new RuntimeException("Inspection record not found: " + id);
@@ -142,23 +85,48 @@ public class InspectionService {
         inspectionRecordRepository.deleteById(id);
     }
 
+    // ─── IInspectionService ──────────────────────────────────────────────────────
+
+    @Override
+    public List<InspectionRecord> getInspectionsByParkingLot(Long parkingLotId) {
+        return inspectionRecordRepository.findByParkingLotId(parkingLotId);
+    }
+
+    @Override
+    public List<InspectionRecord> getLatestInspections(Long parkingLotId) {
+        return inspectionRecordRepository.findLatestInspectionsByParkingLot(parkingLotId);
+    }
+
+    @Override
+    public List<InspectionRecord> getInspectionsByAdmin(Long adminId) {
+        return inspectionRecordRepository.findByInspectorId(adminId);
+    }
+
+    @Override
+    public List<InspectionRecord> getInspectionsByStatus(InspectionStatus status) {
+        return inspectionRecordRepository.findByStatus(status);
+    }
+
+    @Override
+    public List<InspectionRecord> getInspectionsByDateRange(LocalDateTime start, LocalDateTime end) {
+        if (start.isAfter(end)) {
+            throw new RuntimeException("Start time must be before end time");
+        }
+        return inspectionRecordRepository.findByInspectionTimeBetween(start, end);
+    }
+
+    @Override
+    public InspectionRecord getInspectionById(Long id) {
+        return inspectionRecordRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Inspection record not found: " + id));
+    }
+
     // ─── Private Helpers ─────────────────────────────────────────────────────────
 
-    /**
-     * Determines the inspection status based on occupancy.
-     * - FAILED           : no spots at all
-     * - NEEDS_MAINTENANCE: occupancy >= 90%
-     * - PASSED           : otherwise
-     */
-    private InspectionStatus determineStatus(int total, int occupied, int available) {
-        if (total == 0) {
-            return InspectionStatus.FAILED;
-        }
+    private InspectionStatus determineStatus(int total, int occupied) {
+        if (total == 0) return InspectionStatus.FAILED;
         double occupancyRate = (double) occupied / total * 100;
-        if (occupancyRate >= 90.0) {
-            return InspectionStatus.NEEDS_MAINTENANCE;
-        }
+        if (occupancyRate >= 90.0) return InspectionStatus.NEEDS_MAINTENANCE;
         return InspectionStatus.PASSED;
     }
 }
-
