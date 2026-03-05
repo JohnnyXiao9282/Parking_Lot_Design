@@ -2,6 +2,9 @@ package com.parking.service;
 
 import com.parking.entity.Car;
 import com.parking.entity.CardPayment;
+import com.parking.exception.InvalidDateRangeException;
+import com.parking.exception.NotParkedException;
+import com.parking.exception.ResourceNotFoundException;
 import com.parking.repository.CardPaymentRepository;
 import com.parking.repository.CarRepository;
 import jakarta.transaction.Transactional;
@@ -29,10 +32,10 @@ public class CardPaymentServiceImpl implements ICardPaymentService {
     @Override
     public CardPayment processCardPayment(Long carId, double amount, String cardNumber) {
         Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("Car not found: " + carId));
+                .orElseThrow(() -> new ResourceNotFoundException("Car not found: " + carId));
 
         if (!car.isParked()) {
-            throw new RuntimeException("Car is not currently parked, cannot process payment: " + carId);
+            throw new NotParkedException("Car is not currently parked, cannot process payment: " + carId);
         }
 
         CardPayment payment = new CardPayment();
@@ -78,13 +81,13 @@ public class CardPaymentServiceImpl implements ICardPaymentService {
     @Override
     public CardPayment getPaymentById(Long id) {
         return cardPaymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Card payment not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Card payment not found: " + id));
     }
 
     @Override
     public CardPayment getPaymentByTransactionId(String transactionId) {
         return cardPaymentRepository.findByTransactionId(transactionId)
-                .orElseThrow(() -> new RuntimeException("Transaction not found: " + transactionId));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found: " + transactionId));
     }
 
     @Override
@@ -95,7 +98,7 @@ public class CardPaymentServiceImpl implements ICardPaymentService {
     @Override
     public List<CardPayment> getPaymentsByDateRange(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
-            throw new RuntimeException("Start time must be before end time");
+            throw new InvalidDateRangeException("Start time must be before end time");
         }
         return cardPaymentRepository.findByPaymentTimestampBetween(start, end);
     }

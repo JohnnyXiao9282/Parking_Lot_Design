@@ -2,6 +2,8 @@ package com.parking.service;
 
 import com.parking.entity.InspectionRecord;
 import com.parking.entity.InspectionRecord.InspectionStatus;
+import com.parking.exception.InvalidDateRangeException;
+import com.parking.exception.ResourceNotFoundException;
 import com.parking.repository.InspectionRecordRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,7 +42,7 @@ public class InspectionServiceUserImpl implements IInspectionService {
     @Override
     public List<InspectionRecord> getInspectionsByDateRange(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
-            throw new RuntimeException("Start time must be before end time");
+            throw new InvalidDateRangeException("Start time must be before end time");
         }
         return inspectionRecordRepository.findByInspectionTimeBetween(start, end);
     }
@@ -48,6 +50,6 @@ public class InspectionServiceUserImpl implements IInspectionService {
     @Override
     public InspectionRecord getInspectionById(Long id) {
         return inspectionRecordRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Inspection record not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Inspection record not found: " + id));
     }
 }

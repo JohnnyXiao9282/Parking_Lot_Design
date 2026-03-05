@@ -2,6 +2,8 @@ package com.parking.service;
 
 import com.parking.entity.Car;
 import com.parking.entity.ParkingSpot;
+import com.parking.exception.NotParkedException;
+import com.parking.exception.ResourceNotFoundException;
 import com.parking.repository.CarRepository;
 import com.parking.repository.ParkingSpotRepository;
 import jakarta.transaction.Transactional;
@@ -22,17 +24,17 @@ public class LeaveServiceImpl implements ILeaveService {
     @Override
     public boolean leave(String licensePlate) {
         Car car = carRepository.findByLicensePlate(licensePlate)
-                .orElseThrow(() -> new RuntimeException("Car not found: " + licensePlate));
+                .orElseThrow(() -> new ResourceNotFoundException("Car not found: " + licensePlate));
 
         if (!car.isParked()) {
-            throw new RuntimeException("Car is not currently parked: " + licensePlate);
+            throw new NotParkedException("Car is not currently parked: " + licensePlate);
         }
 
         ParkingSpot spot = car.getParkingSpot();
 
         boolean success = car.leave();
         if (!success) {
-            throw new RuntimeException("Car failed to leave its spot: " + licensePlate);
+            throw new NotParkedException("Car failed to leave its spot: " + licensePlate);
         }
 
         if (spot != null) {
@@ -42,4 +44,3 @@ public class LeaveServiceImpl implements ILeaveService {
         return true;
     }
 }
-

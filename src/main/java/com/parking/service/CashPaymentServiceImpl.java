@@ -2,6 +2,10 @@ package com.parking.service;
 
 import com.parking.entity.Car;
 import com.parking.entity.CashPayment;
+import com.parking.exception.InsufficientPaymentException;
+import com.parking.exception.InvalidDateRangeException;
+import com.parking.exception.NotParkedException;
+import com.parking.exception.ResourceNotFoundException;
 import com.parking.repository.CarRepository;
 import com.parking.repository.CashPaymentRepository;
 import jakarta.transaction.Transactional;
@@ -29,14 +33,14 @@ public class CashPaymentServiceImpl implements ICashPaymentService {
     @Override
     public CashPayment processCashPayment(Long carId, double amount, double cashReceived) {
         Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("Car not found: " + carId));
+                .orElseThrow(() -> new ResourceNotFoundException("Car not found: " + carId));
 
         if (!car.isParked()) {
-            throw new RuntimeException("Car is not currently parked, cannot process payment: " + carId);
+            throw new NotParkedException("Car is not currently parked, cannot process payment: " + carId);
         }
 
         if (cashReceived < amount) {
-            throw new RuntimeException(
+            throw new InsufficientPaymentException(
                     "Insufficient cash: received " + cashReceived + " but amount due is " + amount);
         }
 
@@ -82,7 +86,7 @@ public class CashPaymentServiceImpl implements ICashPaymentService {
     @Override
     public CashPayment getPaymentById(Long id) {
         return cashPaymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cash payment not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cash payment not found: " + id));
     }
 
     @Override
@@ -93,7 +97,7 @@ public class CashPaymentServiceImpl implements ICashPaymentService {
     @Override
     public List<CashPayment> getPaymentsByDateRange(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
-            throw new RuntimeException("Start time must be before end time");
+            throw new InvalidDateRangeException("Start time must be before end time");
         }
         return cashPaymentRepository.findByPaymentTimestampBetween(start, end);
     }

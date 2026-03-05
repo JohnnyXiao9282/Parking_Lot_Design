@@ -4,6 +4,8 @@ import com.parking.entity.Admin;
 import com.parking.entity.InspectionRecord;
 import com.parking.entity.InspectionRecord.InspectionStatus;
 import com.parking.entity.ParkingLot;
+import com.parking.exception.InvalidDateRangeException;
+import com.parking.exception.ResourceNotFoundException;
 import com.parking.repository.AdminRepository;
 import com.parking.repository.InspectionRecordRepository;
 import com.parking.repository.ParkingLotRepository;
@@ -38,10 +40,10 @@ public class InspectionServiceImpl implements IAdminInspectionService {
     @Override
     public InspectionRecord conductInspection(Long parkingLotId, Long adminId, String notes) {
         ParkingLot parkingLot = parkingLotRepository.findById(parkingLotId)
-                .orElseThrow(() -> new RuntimeException("Parking lot not found: " + parkingLotId));
+                .orElseThrow(() -> new ResourceNotFoundException("Parking lot not found: " + parkingLotId));
 
         Admin inspector = adminRepository.findById(adminId)
-                .orElseThrow(() -> new RuntimeException("Admin not found: " + adminId));
+                .orElseThrow(() -> new ResourceNotFoundException("Admin not found: " + adminId));
 
         int totalSpots = parkingSpotRepository.countByParkingLotId(parkingLotId);
         int occupiedSpots = parkingSpotRepository.countOccupiedByParkingLotId(parkingLotId);
@@ -75,7 +77,7 @@ public class InspectionServiceImpl implements IAdminInspectionService {
     @Override
     public void deleteInspection(Long id) {
         if (!inspectionRecordRepository.existsById(id)) {
-            throw new RuntimeException("Inspection record not found: " + id);
+            throw new ResourceNotFoundException("Inspection record not found: " + id);
         }
         inspectionRecordRepository.deleteById(id);
     }
@@ -105,7 +107,7 @@ public class InspectionServiceImpl implements IAdminInspectionService {
     @Override
     public List<InspectionRecord> getInspectionsByDateRange(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
-            throw new RuntimeException("Start time must be before end time");
+            throw new InvalidDateRangeException("Start time must be before end time");
         }
         return inspectionRecordRepository.findByInspectionTimeBetween(start, end);
     }
@@ -113,7 +115,7 @@ public class InspectionServiceImpl implements IAdminInspectionService {
     @Override
     public InspectionRecord getInspectionById(Long id) {
         return inspectionRecordRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Inspection record not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Inspection record not found: " + id));
     }
 
     // ─── Private Helpers ─────────────────────────────────────────────────────────

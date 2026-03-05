@@ -4,6 +4,8 @@ import com.parking.entity.Car;
 import com.parking.entity.LargeCar;
 import com.parking.entity.ParkingSpot;
 import com.parking.entity.SmallCar;
+import com.parking.exception.AlreadyParkedException;
+import com.parking.exception.NoAvailableSpotException;
 import com.parking.repository.CarRepository;
 import com.parking.repository.ParkingSpotRepository;
 import com.parking.web.dto.ParkRequest;
@@ -31,20 +33,20 @@ public class ParkServiceImpl implements IParkService {
                 .orElseGet(() -> createCar(request));
 
         if (car.isParked()) {
-            throw new RuntimeException("Car is already parked: " + request.getLicensePlate());
+            throw new AlreadyParkedException("Car is already parked: " + request.getLicensePlate());
         }
 
         boolean isSmall = car instanceof SmallCar;
         List<ParkingSpot> available = parkingSpotRepository.findAvailableSpotsByTypeWithLevel(isSmall);
 
         if (available.isEmpty()) {
-            throw new RuntimeException("No available spot for " + (isSmall ? "small" : "large") + " car");
+            throw new NoAvailableSpotException("No available spot for " + (isSmall ? "small" : "large") + " car");
         }
 
         ParkingSpot spot = available.get(0);
         boolean success = car.park(spot);
         if (!success) {
-            throw new RuntimeException("Car refused to park into spot: " + spot.getId());
+            throw new NoAvailableSpotException("Car refused to park into spot: " + spot.getId());
         }
 
         parkingSpotRepository.save(spot);
@@ -69,4 +71,3 @@ public class ParkServiceImpl implements IParkService {
         };
     }
 }
-
