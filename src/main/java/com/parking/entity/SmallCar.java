@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @DiscriminatorValue("SMALL")
 @Data
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class SmallCar extends Car {
 
     public SmallCar(String make, String model, String licensePlate, int hourlyRate) {
-        super(null, make, model, licensePlate, hourlyRate, false, null, null);
+        super(null, make, model, licensePlate, hourlyRate, false, null, null, null);
     }
 
     @Override
@@ -21,6 +23,7 @@ public class SmallCar extends Car {
         if (spot != null && spot.isAvailable() && spot.isSmallCarSpot()) {
             this.setParkingSpot(spot);
             this.setParked(true);
+            this.setParkedSince(LocalDateTime.now());
             spot.setOccupied(true);
             return true;
         }
@@ -33,6 +36,7 @@ public class SmallCar extends Car {
             this.getParkingSpot().setOccupied(false);
             this.setParkingSpot(null);
             this.setParked(false);
+            this.setParkedSince(null);
             return true;
         }
         return false;

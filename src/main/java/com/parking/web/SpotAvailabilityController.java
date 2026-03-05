@@ -8,6 +8,8 @@ import com.parking.repository.ParkingSpotRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -104,7 +106,13 @@ public class SpotAvailabilityController {
                     .body(Map.of("message", "Car is not currently parked: " + licensePlate));
         }
 
-        int hours = car.getParkedHours() != null ? car.getParkedHours() : 1;
+        // Compute elapsed hours from parkedSince — round up to nearest hour, min 1
+        LocalDateTime since = car.getParkedSince();
+        long elapsedMinutes = since != null
+                ? ChronoUnit.MINUTES.between(since, LocalDateTime.now())
+                : 60; // fallback: 1 hour if timestamp missing (legacy record)
+        long hours = Math.max(1, (long) Math.ceil(elapsedMinutes / 60.0));
+
         double amount = (double) car.getHourlyRate() * hours;
 
         return ResponseEntity.ok(Map.of(
