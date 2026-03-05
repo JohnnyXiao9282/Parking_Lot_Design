@@ -9,6 +9,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -21,15 +22,13 @@ public class DataInitializer implements ApplicationRunner {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional
     public void run(ApplicationArguments args) {
-        migrateEnumColumns();
-        seedParkingLot();
-        seedAdmin();
+        migrateEnumColumns();   // commits immediately in its own transaction
+        seedData();             // separate transaction for JPA operations
     }
 
-    // ── Migrate PostgreSQL native ENUM columns to VARCHAR ─────────────────────────
-    private void migrateEnumColumns() {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void migrateEnumColumns() {
         try {
             jdbcTemplate.execute(
                 "ALTER TABLE admins ALTER COLUMN role TYPE VARCHAR(20) USING role::text"
@@ -46,6 +45,12 @@ public class DataInitializer implements ApplicationRunner {
         } catch (Exception e) {
             log.debug("[DataInitializer] inspection_records.status already VARCHAR or migration skipped: {}", e.getMessage());
         }
+    }
+
+    @Transactional
+    public void seedData() {
+        seedParkingLot();
+        seedAdmin();
     }
 
     // ── Parking Lot ───────────────────────────────────────────────────────────────
