@@ -37,6 +37,7 @@ com\parking\service\ICardPaymentService.class
 com\parking\service\IInspectionService.class
 com\parking\web\InspectionController.class
 com\parking\entity\InspectionRecord$InspectionStatus.class
+com\parking\web\SpotAvailabilityController.class
 com\parking\repository\ParkingLotRepository.class
 com\parking\entity\CardPayment.class
 com\parking\exception\InvalidDateRangeException.class

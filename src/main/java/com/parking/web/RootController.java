@@ -16,11 +16,12 @@ public class RootController {
                 "status", "running",
                 "version", "1.0.0",
                 "endpoints", Map.of(
-                        "park",        "POST /api/park",
-                        "leave",       "POST /api/leave/{licensePlate}",
-                        "payment",     "POST /api/payments/card | /cash",
-                        "inspections", "GET  /api/inspections/lot/{id}",
-                        "admin",       "POST /api/admin/inspections"
+                        "park",         "POST /api/park",
+                        "leave",        "POST /api/leave/{licensePlate}",
+                        "payment",      "POST /api/payments/card | /cash",
+                        "inspections",  "GET  /api/inspections/lot/{id}",
+                        "admin",        "POST /api/admin/inspections",
+                        "availability", "GET  /api/spots/availability"
                 )
         ));
     }

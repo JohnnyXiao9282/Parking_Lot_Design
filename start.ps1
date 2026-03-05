@@ -6,48 +6,62 @@
 
 $ROOT = $PSScriptRoot
 
-# ── Env ───────────────────────────────────────────────────────────────────────
-$env:JAVA_HOME  = "C:\Program Files\Microsoft\jdk-21.0.10.7-hotspot"
-$env:M2_HOME    = "C:\maven\apache-maven-3.9.6"
-$MVN            = "$env:M2_HOME\bin\mvn.cmd"
+# ── Tool paths ────────────────────────────────────────────────────────────────
+$JAVA_HOME = "C:\Program Files\Microsoft\jdk-21.0.10.7-hotspot"
+$M2_HOME   = "C:\maven\apache-maven-3.9.6"
+$MVN       = "$M2_HOME\bin\mvn.cmd"
 
-# Load .env file if present
-$envFile = Join-Path $ROOT ".env"
+# ── Load .env into a hashtable ────────────────────────────────────────────────
+$envVars = @{}
+$envFile  = Join-Path $ROOT ".env"
 if (Test-Path $envFile) {
     Get-Content $envFile | ForEach-Object {
-        if ($_ -match '^\s*([^#][^=]+)=(.*)$') {
-            $key   = $matches[1].Trim()
-            $value = $matches[2].Trim()
-            [System.Environment]::SetEnvironmentVariable($key, $value, "Process")
+        if ($_ -match '^\s*([^#=][^=]*)=(.*)$') {
+            $envVars[$matches[1].Trim()] = $matches[2].Trim()
         }
     }
-    Write-Host "[start] Loaded .env" -ForegroundColor Cyan
+    Write-Host "[start] Loaded .env ($($envVars.Count) vars)" -ForegroundColor Cyan
+} else {
+    Write-Host "[start] WARNING: .env not found — database config may be missing" -ForegroundColor Yellow
 }
+
+# Build a block of $env:VAR=VALUE lines to inject into the child shell
+$envBlock = ($envVars.GetEnumerator() | ForEach-Object {
+    "`$env:$($_.Key) = '$($_.Value)'"
+}) -join "; "
 
 # ── Backend ───────────────────────────────────────────────────────────────────
 Write-Host "[start] Starting Spring Boot backend..." -ForegroundColor Green
-$backend = Start-Process -FilePath "powershell.exe" `
-    -ArgumentList "-NoExit", "-Command",
-        "cd '$ROOT'; `$env:JAVA_HOME='$env:JAVA_HOME'; `$env:M2_HOME='$env:M2_HOME'; & '$MVN' spring-boot:run" `
+
+$backendCmd = "
+    `$env:JAVA_HOME = '$JAVA_HOME';
+    `$env:M2_HOME   = '$M2_HOME';
+    $envBlock;
+    Set-Location '$ROOT';
+    & '$MVN' spring-boot:run
+"
+
+$backend = Start-Process powershell.exe `
+    -ArgumentList "-NoExit", "-Command", $backendCmd `
     -PassThru
 
 # ── Frontend ──────────────────────────────────────────────────────────────────
 Write-Host "[start] Starting Vite frontend..." -ForegroundColor Green
+
 $frontendDir = Join-Path $ROOT "frontend"
-$frontend = Start-Process -FilePath "powershell.exe" `
-    -ArgumentList "-NoExit", "-Command",
-        "cd '$frontendDir'; npm run dev" `
+$frontend = Start-Process powershell.exe `
+    -ArgumentList "-NoExit", "-Command", "Set-Location '$frontendDir'; npm run dev" `
     -PassThru
 
-# ── Wait / cleanup ────────────────────────────────────────────────────────────
+# ── Info ──────────────────────────────────────────────────────────────────────
 Write-Host ""
-Write-Host "  Backend  → http://localhost:8082" -ForegroundColor Yellow
-Write-Host "  Frontend → http://localhost:5173" -ForegroundColor Yellow
+$backendPort = if ($envVars['SERVER_PORT']) { $envVars['SERVER_PORT'] } else { '8082' }
+Write-Host "  Backend  -> http://localhost:$backendPort" -ForegroundColor Yellow
+Write-Host "  Frontend -> http://localhost:5173" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "[start] Both processes are running. Close their windows or press Ctrl+C here to stop." -ForegroundColor Cyan
+Write-Host "[start] Both processes running. Close their windows or Ctrl+C here to stop all." -ForegroundColor Cyan
 
 try {
-    # Keep this script alive so Ctrl+C can be used to stop everything
     Wait-Process -Id $backend.Id, $frontend.Id
 } finally {
     Write-Host "`n[start] Stopping all processes..." -ForegroundColor Red
@@ -55,4 +69,3 @@ try {
     if (!$frontend.HasExited) { Stop-Process -Id $frontend.Id -Force -ErrorAction SilentlyContinue }
     Write-Host "[start] Done." -ForegroundColor Red
 }
-

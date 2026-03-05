@@ -1,3 +1,5 @@
+import SpotIndicator from './components/SpotIndicator'
+
 function App() {
   return (
     <div className="relative min-h-screen bg-gray-950 text-white">
@@ -22,6 +24,9 @@ function App() {
           </button>
         </div>
       </div>
+
+      {/* Spot availability — bottom right */}
+      <SpotIndicator />
 
     </div>
   )
