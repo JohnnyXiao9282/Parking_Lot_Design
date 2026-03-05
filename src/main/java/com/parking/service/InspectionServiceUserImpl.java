@@ -3,6 +3,7 @@ package com.parking.service;
 import com.parking.entity.InspectionRecord;
 import com.parking.entity.InspectionRecord.InspectionStatus;
 import com.parking.repository.InspectionRecordRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @Qualifier("userInspectionService")
+@Transactional
 public class InspectionServiceUserImpl implements IInspectionService {
 
     private final InspectionRecordRepository inspectionRecordRepository;

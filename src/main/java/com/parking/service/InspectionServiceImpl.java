@@ -43,13 +43,8 @@ public class InspectionServiceImpl implements IAdminInspectionService {
         Admin inspector = adminRepository.findById(adminId)
                 .orElseThrow(() -> new RuntimeException("Admin not found: " + adminId));
 
-        int totalSpots = (int) parkingSpotRepository.findAll().stream()
-                .filter(spot -> spot.getLevel().getParkingLot().getId().equals(parkingLotId))
-                .count();
-
-        int occupiedSpots = (int) parkingSpotRepository.findByIsOccupied(true).stream()
-                .filter(spot -> spot.getLevel().getParkingLot().getId().equals(parkingLotId))
-                .count();
+        int totalSpots = parkingSpotRepository.countByParkingLotId(parkingLotId);
+        int occupiedSpots = parkingSpotRepository.countOccupiedByParkingLotId(parkingLotId);
 
         int availableSpots = totalSpots - occupiedSpots;
         InspectionStatus status = determineStatus(totalSpots, occupiedSpots);
