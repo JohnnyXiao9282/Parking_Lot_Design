@@ -1,24 +1,23 @@
 server:
-  port: 8082
+  port: ${SERVER_PORT:8082}
 
 spring:
   application:
-    name: parking-lot-design
+    name: ${APP_NAME:parking-lot-design}
 
   datasource:
-    url: jdbc:postgresql://localhost:5434/ParkingLot
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: Jjh123123!
+    url: ${DB_URL:jdbc:postgresql://localhost:5434/ParkingLot}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: false
-    open-in-view: false
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    show-sql: ${JPA_SHOW_SQL:false}
+    open-in-view: ${JPA_OPEN_IN_VIEW:false}
 
 logging:
   level:
-    root: INFO
-    com.parking: DEBUG
-
+    root: ${LOG_LEVEL_ROOT:INFO}
+    com.parking: ${LOG_LEVEL_APP:DEBUG}
