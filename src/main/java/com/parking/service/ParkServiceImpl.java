@@ -1,10 +1,12 @@
 package com.parking.service;
 
 import com.parking.entity.Car;
+import com.parking.entity.LargeCar;
 import com.parking.entity.ParkingSpot;
 import com.parking.entity.SmallCar;
 import com.parking.repository.CarRepository;
 import com.parking.repository.ParkingSpotRepository;
+import com.parking.web.dto.ParkRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +25,17 @@ public class ParkServiceImpl implements IParkService {
 
     @Transactional
     @Override
-    public ParkingSpot park(Long carId) {
-        Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("Car not found: " + carId));
+    public ParkingSpot park(ParkRequest request) {
+        // Look up by license plate — reuse if returning car, register if new
+        Car car = carRepository.findByLicensePlate(request.getLicensePlate())
+                .orElseGet(() -> createCar(request));
 
         if (car.isParked()) {
-            throw new RuntimeException("Car is already parked: " + carId);
+            throw new RuntimeException("Car is already parked: " + request.getLicensePlate());
         }
 
         boolean isSmall = car instanceof SmallCar;
-        List<ParkingSpot> available = parkingSpotRepository.findAvailableSpotsByType(isSmall);
+        List<ParkingSpot> available = parkingSpotRepository.findAvailableSpotsByTypeWithLevel(isSmall);
 
         if (available.isEmpty()) {
             throw new RuntimeException("No available spot for " + (isSmall ? "small" : "large") + " car");
@@ -47,6 +50,23 @@ public class ParkServiceImpl implements IParkService {
         parkingSpotRepository.save(spot);
         carRepository.save(car);
         return spot;
+    }
+
+    private Car createCar(ParkRequest request) {
+        return switch (request.getCarType()) {
+            case SMALL -> new SmallCar(
+                    request.getMake(),
+                    request.getModel(),
+                    request.getLicensePlate(),
+                    request.getHourlyRate()
+            );
+            case LARGE -> new LargeCar(
+                    request.getMake(),
+                    request.getModel(),
+                    request.getLicensePlate(),
+                    request.getHourlyRate()
+            );
+        };
     }
 }
 

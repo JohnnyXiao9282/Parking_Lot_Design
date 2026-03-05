@@ -34,7 +34,8 @@ public abstract class Car {
 
     private Integer parkedHours;
 
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parking_spot_id")
     private ParkingSpot parkingSpot;
 
     public abstract boolean park(ParkingSpot spot);

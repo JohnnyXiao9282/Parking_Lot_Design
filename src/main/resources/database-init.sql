@@ -97,8 +97,10 @@ CREATE TABLE cars (
     model           TEXT        NOT NULL,
     license_plate   TEXT        NOT NULL,
     hourly_rate     INTEGER     NOT NULL,
-    is_parked       BOOLEAN     NOT NULL DEFAULT FALSE,
-    parked_hours    INTEGER
+    is_parked           BOOLEAN     NOT NULL DEFAULT FALSE,
+    parked_hours        INTEGER,
+    parking_spot_id     BIGINT
+        REFERENCES parking_spots(id) ON DELETE SET NULL
 );
 
 -- ----------------------------------------------------------------
@@ -160,6 +162,7 @@ CREATE INDEX idx_spots_level                ON parking_spots(level_id);
 CREATE INDEX idx_spots_occupied             ON parking_spots(is_occupied);
 CREATE INDEX idx_spots_small_car            ON parking_spots(is_small_car_spot);
 CREATE INDEX idx_cars_license_plate         ON cars(license_plate);
+CREATE INDEX idx_cars_parking_spot          ON cars(parking_spot_id);
 CREATE INDEX idx_inspection_parking_lot     ON inspection_records(parking_lot_id);
 CREATE INDEX idx_inspection_admin           ON inspection_records(admin_id);
 CREATE INDEX idx_inspection_time            ON inspection_records(inspection_time DESC);

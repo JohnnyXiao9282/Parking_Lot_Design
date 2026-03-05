@@ -1,8 +1,9 @@
 package com.parking.service;
 
 import com.parking.entity.ParkingSpot;
+import com.parking.web.dto.ParkRequest;
 
 public interface IParkService {
-    ParkingSpot park(Long carId);
+    ParkingSpot park(ParkRequest request);
 }
 

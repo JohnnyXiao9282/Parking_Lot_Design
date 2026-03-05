@@ -19,5 +19,8 @@ public interface ParkingSpotRepository extends JpaRepository<ParkingSpot, Long> 
 
     @Query("SELECT ps FROM ParkingSpot ps WHERE ps.isSmallCarSpot = :isSmallCarSpot AND ps.isOccupied = false")
     List<ParkingSpot> findAvailableSpotsByType(boolean isSmallCarSpot);
+
+    @Query("SELECT ps FROM ParkingSpot ps JOIN FETCH ps.level WHERE ps.isSmallCarSpot = :isSmallCarSpot AND ps.isOccupied = false")
+    List<ParkingSpot> findAvailableSpotsByTypeWithLevel(boolean isSmallCarSpot);
 }
 
