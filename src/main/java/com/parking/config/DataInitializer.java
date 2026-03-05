@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +18,34 @@ public class DataInitializer implements ApplicationRunner {
 
     private final ParkingLotRepository parkingLotRepository;
     private final AdminRepository adminRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
+        migrateEnumColumns();
         seedParkingLot();
         seedAdmin();
+    }
+
+    // ── Migrate PostgreSQL native ENUM columns to VARCHAR ─────────────────────────
+    private void migrateEnumColumns() {
+        try {
+            jdbcTemplate.execute(
+                "ALTER TABLE admins ALTER COLUMN role TYPE VARCHAR(20) USING role::text"
+            );
+            log.info("[DataInitializer] Migrated admins.role to VARCHAR.");
+        } catch (Exception e) {
+            log.debug("[DataInitializer] admins.role already VARCHAR or migration skipped: {}", e.getMessage());
+        }
+        try {
+            jdbcTemplate.execute(
+                "ALTER TABLE inspection_records ALTER COLUMN status TYPE VARCHAR(30) USING status::text"
+            );
+            log.info("[DataInitializer] Migrated inspection_records.status to VARCHAR.");
+        } catch (Exception e) {
+            log.debug("[DataInitializer] inspection_records.status already VARCHAR or migration skipped: {}", e.getMessage());
+        }
     }
 
     // ── Parking Lot ───────────────────────────────────────────────────────────────
