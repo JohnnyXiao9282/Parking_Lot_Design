@@ -16,9 +16,6 @@ public class CashPaymentServiceImpl implements ICashPaymentService {
     private final CashPaymentRepository cashPaymentRepository;
     private final CarRepository carRepository;
 
-    private double currentAmount;
-    private boolean currentSuccessful;
-
     public CashPaymentServiceImpl(CashPaymentRepository cashPaymentRepository, CarRepository carRepository) {
         this.cashPaymentRepository = cashPaymentRepository;
         this.carRepository = carRepository;
@@ -30,6 +27,11 @@ public class CashPaymentServiceImpl implements ICashPaymentService {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new RuntimeException("Car not found: " + carId));
 
+        if (cashReceived < amount) {
+            throw new RuntimeException(
+                    "Insufficient cash: received " + cashReceived + " but amount due is " + amount);
+        }
+
         CashPayment payment = new CashPayment();
         payment.setCar(car);
         payment.setAmount(amount);
@@ -37,27 +39,20 @@ public class CashPaymentServiceImpl implements ICashPaymentService {
         payment.setPaymentTimestamp(LocalDateTime.now());
 
         boolean success = processPayment(amount);
-        if (success) {
-            payment.setChangeGiven(cashReceived - amount);
-        } else {
-            payment.setChangeGiven(0);
-        }
+        payment.setChangeGiven(success ? cashReceived - amount : 0);
         payment.setSuccessful(success);
-
-        this.currentAmount = amount;
-        this.currentSuccessful = success;
 
         return cashPaymentRepository.save(payment);
     }
 
     @Override
     public boolean processPayment(double amount) {
-        return currentAmount >= amount;
+        return amount > 0;
     }
 
     @Override
     public double getAmount() {
-        return currentAmount;
+        throw new UnsupportedOperationException("Use processCashPayment() to get payment details");
     }
 
     @Override
@@ -67,7 +62,7 @@ public class CashPaymentServiceImpl implements ICashPaymentService {
 
     @Override
     public boolean isSuccessful() {
-        return currentSuccessful;
+        throw new UnsupportedOperationException("Use processCashPayment() to get payment details");
     }
 
     @Override

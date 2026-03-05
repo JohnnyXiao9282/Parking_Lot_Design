@@ -16,9 +16,6 @@ public class CardPaymentServiceImpl implements ICardPaymentService {
     private final CardPaymentRepository cardPaymentRepository;
     private final CarRepository carRepository;
 
-    private double currentAmount;
-    private boolean currentSuccessful;
-
     public CardPaymentServiceImpl(CardPaymentRepository cardPaymentRepository, CarRepository carRepository) {
         this.cardPaymentRepository = cardPaymentRepository;
         this.carRepository = carRepository;
@@ -35,13 +32,10 @@ public class CardPaymentServiceImpl implements ICardPaymentService {
         payment.setAmount(amount);
         payment.setCardNumber(cardNumber);
         payment.setPaymentTimestamp(LocalDateTime.now());
+        payment.setTransactionId("TXN" + System.currentTimeMillis());
 
         boolean success = processPayment(amount);
-        payment.setTransactionId("TXN" + System.currentTimeMillis());
         payment.setSuccessful(success);
-
-        this.currentAmount = amount;
-        this.currentSuccessful = success;
 
         return cardPaymentRepository.save(payment);
     }
@@ -54,7 +48,7 @@ public class CardPaymentServiceImpl implements ICardPaymentService {
 
     @Override
     public double getAmount() {
-        return currentAmount;
+        throw new UnsupportedOperationException("Use processCardPayment() to get payment details");
     }
 
     @Override
@@ -64,7 +58,7 @@ public class CardPaymentServiceImpl implements ICardPaymentService {
 
     @Override
     public boolean isSuccessful() {
-        return currentSuccessful;
+        throw new UnsupportedOperationException("Use processCardPayment() to get payment details");
     }
 
     @Override
