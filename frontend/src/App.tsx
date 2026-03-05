@@ -3,6 +3,8 @@ import SpotIndicator from './components/SpotIndicator'
 import ParkingForm from './pages/ParkingForm'
 import FloorMap from './pages/FloorMap'
 import LeaveForm from './pages/LeaveForm'
+import CardPayment from './pages/CardPayment'
+import CashPayment from './pages/CashPayment'
 
 function Home() {
   const navigate = useNavigate()
@@ -50,6 +52,8 @@ function App() {
       <Route path="/park" element={<ParkingForm />} />
       <Route path="/park/floor" element={<FloorMap />} />
       <Route path="/leave" element={<LeaveForm />} />
+      <Route path="/payment/card" element={<CardPayment />} />
+      <Route path="/payment/cash" element={<CashPayment />} />
     </Routes>
   )
 }

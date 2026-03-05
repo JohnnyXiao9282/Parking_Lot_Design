@@ -118,6 +118,18 @@ export default function LeaveForm() {
               </button>
               <button
                 disabled={!selectedMethod}
+                onClick={() => {
+                  if (!selectedMethod || !quote) return
+                  navigate(selectedMethod === 'CARD' ? '/payment/card' : '/payment/cash', {
+                    state: {
+                      carId:        quote.carId,
+                      licensePlate: quote.licensePlate,
+                      make:         quote.make,
+                      model:        quote.model,
+                      amountDue:    quote.amountDue,
+                    },
+                  })
+                }}
                 className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold transition-all"
               >
                 Proceed
