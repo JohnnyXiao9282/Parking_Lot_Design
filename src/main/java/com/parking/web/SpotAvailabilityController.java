@@ -1,6 +1,8 @@
 package com.parking.web;
 
+import com.parking.entity.Car;
 import com.parking.entity.ParkingSpot;
+import com.parking.repository.CarRepository;
 import com.parking.repository.LevelRepository;
 import com.parking.repository.ParkingSpotRepository;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +18,14 @@ public class SpotAvailabilityController {
 
     private final LevelRepository levelRepository;
     private final ParkingSpotRepository parkingSpotRepository;
+    private final CarRepository carRepository;
 
     public SpotAvailabilityController(LevelRepository levelRepository,
-                                      ParkingSpotRepository parkingSpotRepository) {
+                                      ParkingSpotRepository parkingSpotRepository,
+                                      CarRepository carRepository) {
         this.levelRepository = levelRepository;
         this.parkingSpotRepository = parkingSpotRepository;
+        this.carRepository = carRepository;
     }
 
     /** GET /api/spots/availability */
@@ -80,6 +85,37 @@ public class SpotAvailabilityController {
                 .orElseGet(() -> ResponseEntity.ok(Map.<String, Object>of(
                         "spotId", -1, "spotNumber", -1
                 )));
+    }
+
+    /**
+     * GET /api/spots/quote/{licensePlate}
+     * Returns car info + amount due for a parked car — read-only, nothing is saved.
+     */
+    @GetMapping("/quote/{licensePlate}")
+    public ResponseEntity<?> getQuote(@PathVariable String licensePlate) {
+        Car car = carRepository.findByLicensePlate(licensePlate).orElse(null);
+
+        if (car == null) {
+            return ResponseEntity.status(404)
+                    .body(Map.of("message", "Car not found: " + licensePlate));
+        }
+        if (!car.isParked()) {
+            return ResponseEntity.status(409)
+                    .body(Map.of("message", "Car is not currently parked: " + licensePlate));
+        }
+
+        int hours = car.getParkedHours() != null ? car.getParkedHours() : 1;
+        double amount = (double) car.getHourlyRate() * hours;
+
+        return ResponseEntity.ok(Map.of(
+                "carId",        car.getId(),
+                "licensePlate", car.getLicensePlate(),
+                "make",         car.getMake(),
+                "model",        car.getModel(),
+                "hourlyRate",   car.getHourlyRate(),
+                "hours",        hours,
+                "amountDue",    amount
+        ));
     }
 }
 

@@ -19,9 +19,6 @@ public class LeaveController {
     /**
      * Release a car from its parking spot by license plate.
      * POST /api/leave/{licensePlate}
-     *
-     * @param licensePlate the license plate of the car to release
-     * @return success status
      */
     @PostMapping("/{licensePlate}")
     public ResponseEntity<Map<String, Object>> leave(@PathVariable String licensePlate) {
