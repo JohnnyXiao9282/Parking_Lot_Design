@@ -1,6 +1,11 @@
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import SpotIndicator from './components/SpotIndicator'
+import ParkingForm from './pages/ParkingForm'
+import FloorMap from './pages/FloorMap'
 
-function App() {
+function Home() {
+  const navigate = useNavigate()
+
   return (
     <div className="relative min-h-screen bg-gray-950 text-white">
 
@@ -16,7 +21,10 @@ function App() {
         <h1 className="text-5xl font-bold tracking-tight mb-8">ParkSmart</h1>
 
         <div className="flex gap-6">
-          <button className="px-10 py-4 text-lg font-semibold bg-blue-600 rounded-xl hover:bg-blue-500 active:scale-95 transition-all">
+          <button
+            onClick={() => navigate('/park')}
+            className="px-10 py-4 text-lg font-semibold bg-blue-600 rounded-xl hover:bg-blue-500 active:scale-95 transition-all"
+          >
             Parking
           </button>
           <button className="px-10 py-4 text-lg font-semibold bg-emerald-600 rounded-xl hover:bg-emerald-500 active:scale-95 transition-all">
@@ -29,6 +37,16 @@ function App() {
       <SpotIndicator />
 
     </div>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/park" element={<ParkingForm />} />
+      <Route path="/park/floor" element={<FloorMap />} />
+    </Routes>
   )
 }
 
