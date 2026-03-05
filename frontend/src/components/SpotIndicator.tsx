@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useAvailability } from '../hooks/useAvailability'
 
 function Bar({ available, total }: { available: number; total: number }) {
@@ -12,7 +13,13 @@ function Bar({ available, total }: { available: number; total: number }) {
 }
 
 export default function SpotIndicator() {
-  const { data, error } = useAvailability(10000)
+  const { data, error, refetch } = useAvailability(10000)
+
+  // Refetch immediately every time this component mounts
+  // (fires on every return to the home page)
+  useEffect(() => {
+    refetch()
+  }, [refetch])
 
   return (
     <div className="fixed bottom-6 right-6 bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 w-52 shadow-xl text-sm">
@@ -58,4 +65,3 @@ export default function SpotIndicator() {
     </div>
   )
 }
-

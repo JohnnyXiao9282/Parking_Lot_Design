@@ -1,6 +1,6 @@
 package com.parking.web;
 
-import com.parking.entity.Level;
+import com.parking.entity.ParkingSpot;
 import com.parking.repository.LevelRepository;
 import com.parking.repository.ParkingSpotRepository;
 import org.springframework.http.ResponseEntity;
@@ -26,17 +26,15 @@ public class SpotAvailabilityController {
     /** GET /api/spots/availability */
     @GetMapping("/availability")
     public ResponseEntity<Map<String, Object>> getAvailability() {
-        List<Level> smallLevels = levelRepository.findByIsSmallCarLevel(true);
-        List<Level> largeLevels = levelRepository.findByIsSmallCarLevel(false);
+        List<ParkingSpot> smallSpots = parkingSpotRepository.findByIsSmallCarSpotOrderBySpotNumberAsc(true);
+        List<ParkingSpot> largeSpots = parkingSpotRepository.findByIsSmallCarSpotOrderBySpotNumberAsc(false);
 
-        int smallAvail = smallLevels.stream().mapToInt(Level::getAvailableSpots).sum();
-        int smallTotal = smallLevels.stream().mapToInt(Level::getTotalSpots).sum();
-        int largeAvail = largeLevels.stream().mapToInt(Level::getAvailableSpots).sum();
-        int largeTotal = largeLevels.stream().mapToInt(Level::getTotalSpots).sum();
+        long smallAvail = smallSpots.stream().filter(ps -> !ps.isOccupied()).count();
+        long largeAvail = largeSpots.stream().filter(ps -> !ps.isOccupied()).count();
 
         return ResponseEntity.ok(Map.of(
-                "smallCar", Map.of("available", smallAvail, "total", smallTotal),
-                "largeCar", Map.of("available", largeAvail, "total", largeTotal)
+                "smallCar", Map.of("available", smallAvail, "total", smallSpots.size()),
+                "largeCar", Map.of("available", largeAvail, "total", largeSpots.size())
         ));
     }
 

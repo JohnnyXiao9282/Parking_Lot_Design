@@ -1,10 +1,12 @@
 package com.parking.service;
 
 import com.parking.entity.Car;
+import com.parking.entity.Level;
 import com.parking.entity.ParkingSpot;
 import com.parking.exception.NotParkedException;
 import com.parking.exception.ResourceNotFoundException;
 import com.parking.repository.CarRepository;
+import com.parking.repository.LevelRepository;
 import com.parking.repository.ParkingSpotRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,14 @@ public class LeaveServiceImpl implements ILeaveService {
 
     private final CarRepository carRepository;
     private final ParkingSpotRepository parkingSpotRepository;
+    private final LevelRepository levelRepository;
 
-    public LeaveServiceImpl(CarRepository carRepository, ParkingSpotRepository parkingSpotRepository) {
+    public LeaveServiceImpl(CarRepository carRepository,
+                            ParkingSpotRepository parkingSpotRepository,
+                            LevelRepository levelRepository) {
         this.carRepository = carRepository;
         this.parkingSpotRepository = parkingSpotRepository;
+        this.levelRepository = levelRepository;
     }
 
     @Transactional
@@ -39,7 +45,15 @@ public class LeaveServiceImpl implements ILeaveService {
 
         if (spot != null) {
             parkingSpotRepository.save(spot);
+
+            // Keep Level.availableSpots in sync
+            Level level = spot.getLevel();
+            if (level != null) {
+                level.setAvailableSpots(Math.min(level.getTotalSpots(), level.getAvailableSpots() + 1));
+                levelRepository.save(level);
+            }
         }
+
         carRepository.save(car);
         return true;
     }

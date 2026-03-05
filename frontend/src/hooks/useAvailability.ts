@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import api from '../api/axios'
 
 interface LevelAvailability {
@@ -11,24 +11,21 @@ interface Availability {
   largeCar: LevelAvailability
 }
 
-export function useAvailability(intervalMs = 10000) {
+export function useAvailability(intervalMs = 5000) {
   const [data, setData] = useState<Availability | null>(null)
   const [error, setError] = useState(false)
 
+  const fetchNow = useCallback(() => {
+    api.get<Availability>('/spots/availability')
+      .then(res => { setData(res.data); setError(false) })
+      .catch(() => setError(true))
+  }, [])
+
   useEffect(() => {
-    let cancelled = false
+    fetchNow()
+    const id = setInterval(fetchNow, intervalMs)
+    return () => clearInterval(id)
+  }, [fetchNow, intervalMs])
 
-    const fetch = () => {
-      api.get<Availability>('/spots/availability')
-        .then(res => { if (!cancelled) { setData(res.data); setError(false) } })
-        .catch(() => { if (!cancelled) setError(true) })
-    }
-
-    fetch()
-    const id = setInterval(fetch, intervalMs)
-    return () => { cancelled = true; clearInterval(id) }
-  }, [intervalMs])
-
-  return { data, error }
+  return { data, error, refetch: fetchNow }
 }
-

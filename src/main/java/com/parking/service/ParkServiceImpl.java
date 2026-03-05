@@ -1,12 +1,14 @@
 package com.parking.service;
 
 import com.parking.entity.Car;
+import com.parking.entity.Level;
 import com.parking.entity.LargeCar;
 import com.parking.entity.ParkingSpot;
 import com.parking.entity.SmallCar;
 import com.parking.exception.AlreadyParkedException;
 import com.parking.exception.NoAvailableSpotException;
 import com.parking.repository.CarRepository;
+import com.parking.repository.LevelRepository;
 import com.parking.repository.ParkingSpotRepository;
 import com.parking.web.dto.ParkRequest;
 import jakarta.transaction.Transactional;
@@ -19,16 +21,19 @@ public class ParkServiceImpl implements IParkService {
 
     private final CarRepository carRepository;
     private final ParkingSpotRepository parkingSpotRepository;
+    private final LevelRepository levelRepository;
 
-    public ParkServiceImpl(CarRepository carRepository, ParkingSpotRepository parkingSpotRepository) {
+    public ParkServiceImpl(CarRepository carRepository,
+                           ParkingSpotRepository parkingSpotRepository,
+                           LevelRepository levelRepository) {
         this.carRepository = carRepository;
         this.parkingSpotRepository = parkingSpotRepository;
+        this.levelRepository = levelRepository;
     }
 
     @Transactional
     @Override
     public ParkingSpot park(ParkRequest request) {
-        // Look up by license plate — reuse if returning car, register if new
         Car car = carRepository.findByLicensePlate(request.getLicensePlate())
                 .orElseGet(() -> createCar(request));
 
@@ -51,6 +56,14 @@ public class ParkServiceImpl implements IParkService {
 
         parkingSpotRepository.save(spot);
         carRepository.save(car);
+
+        // Keep Level.availableSpots in sync
+        Level level = spot.getLevel();
+        if (level != null) {
+            level.setAvailableSpots(Math.max(0, level.getAvailableSpots() - 1));
+            levelRepository.save(level);
+        }
+
         return spot;
     }
 
