@@ -20,19 +20,19 @@ public class LeaveServiceImpl implements ILeaveService {
 
     @Transactional
     @Override
-    public boolean leave(Long carId) {
-        Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("Car not found: " + carId));
+    public boolean leave(String licensePlate) {
+        Car car = carRepository.findByLicensePlate(licensePlate)
+                .orElseThrow(() -> new RuntimeException("Car not found: " + licensePlate));
 
         if (!car.isParked()) {
-            throw new RuntimeException("Car is not currently parked: " + carId);
+            throw new RuntimeException("Car is not currently parked: " + licensePlate);
         }
 
         ParkingSpot spot = car.getParkingSpot();
 
         boolean success = car.leave();
         if (!success) {
-            throw new RuntimeException("Car failed to leave its spot: " + carId);
+            throw new RuntimeException("Car failed to leave its spot: " + licensePlate);
         }
 
         if (spot != null) {

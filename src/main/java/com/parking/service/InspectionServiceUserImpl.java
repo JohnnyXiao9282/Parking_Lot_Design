@@ -3,12 +3,14 @@ package com.parking.service;
 import com.parking.entity.InspectionRecord;
 import com.parking.entity.InspectionRecord.InspectionStatus;
 import com.parking.repository.InspectionRecordRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Qualifier("userInspectionService")
 public class InspectionServiceUserImpl implements IInspectionService {
 
     private final InspectionRecordRepository inspectionRecordRepository;
@@ -51,4 +53,3 @@ public class InspectionServiceUserImpl implements IInspectionService {
                 .orElseThrow(() -> new RuntimeException("Inspection record not found: " + id));
     }
 }
-

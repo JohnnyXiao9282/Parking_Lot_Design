@@ -15,10 +15,14 @@ public class CardPaymentServiceImpl implements ICardPaymentService {
 
     private final CardPaymentRepository cardPaymentRepository;
     private final CarRepository carRepository;
+    private final ILeaveService leaveService;
 
-    public CardPaymentServiceImpl(CardPaymentRepository cardPaymentRepository, CarRepository carRepository) {
+    public CardPaymentServiceImpl(CardPaymentRepository cardPaymentRepository,
+                                  CarRepository carRepository,
+                                  ILeaveService leaveService) {
         this.cardPaymentRepository = cardPaymentRepository;
         this.carRepository = carRepository;
+        this.leaveService = leaveService;
     }
 
     @Transactional
@@ -26,6 +30,10 @@ public class CardPaymentServiceImpl implements ICardPaymentService {
     public CardPayment processCardPayment(Long carId, double amount, String cardNumber) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new RuntimeException("Car not found: " + carId));
+
+        if (!car.isParked()) {
+            throw new RuntimeException("Car is not currently parked, cannot process payment: " + carId);
+        }
 
         CardPayment payment = new CardPayment();
         payment.setCar(car);
@@ -37,7 +45,13 @@ public class CardPaymentServiceImpl implements ICardPaymentService {
         boolean success = processPayment(amount);
         payment.setSuccessful(success);
 
-        return cardPaymentRepository.save(payment);
+        CardPayment saved = cardPaymentRepository.save(payment);
+
+        if (success) {
+            leaveService.leave(car.getLicensePlate());
+        }
+
+        return saved;
     }
 
     @Override

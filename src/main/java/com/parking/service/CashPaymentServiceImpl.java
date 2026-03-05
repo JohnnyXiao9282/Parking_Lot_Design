@@ -15,10 +15,14 @@ public class CashPaymentServiceImpl implements ICashPaymentService {
 
     private final CashPaymentRepository cashPaymentRepository;
     private final CarRepository carRepository;
+    private final ILeaveService leaveService;
 
-    public CashPaymentServiceImpl(CashPaymentRepository cashPaymentRepository, CarRepository carRepository) {
+    public CashPaymentServiceImpl(CashPaymentRepository cashPaymentRepository,
+                                  CarRepository carRepository,
+                                  ILeaveService leaveService) {
         this.cashPaymentRepository = cashPaymentRepository;
         this.carRepository = carRepository;
+        this.leaveService = leaveService;
     }
 
     @Transactional
@@ -26,6 +30,10 @@ public class CashPaymentServiceImpl implements ICashPaymentService {
     public CashPayment processCashPayment(Long carId, double amount, double cashReceived) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new RuntimeException("Car not found: " + carId));
+
+        if (!car.isParked()) {
+            throw new RuntimeException("Car is not currently parked, cannot process payment: " + carId);
+        }
 
         if (cashReceived < amount) {
             throw new RuntimeException(
@@ -42,7 +50,13 @@ public class CashPaymentServiceImpl implements ICashPaymentService {
         payment.setChangeGiven(success ? cashReceived - amount : 0);
         payment.setSuccessful(success);
 
-        return cashPaymentRepository.save(payment);
+        CashPayment saved = cashPaymentRepository.save(payment);
+
+        if (success) {
+            leaveService.leave(car.getLicensePlate());
+        }
+
+        return saved;
     }
 
     @Override

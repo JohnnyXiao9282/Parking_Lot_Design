@@ -17,17 +17,17 @@ public class LeaveController {
     }
 
     /**
-     * Release a car from its parking spot.
-     * POST /api/leave/{carId}
+     * Release a car from its parking spot by license plate.
+     * POST /api/leave/{licensePlate}
      *
-     * @param carId the ID of the car to release
+     * @param licensePlate the license plate of the car to release
      * @return success status
      */
-    @PostMapping("/{carId}")
-    public ResponseEntity<Map<String, Object>> leave(@PathVariable Long carId) {
-        leaveService.leave(carId);
+    @PostMapping("/{licensePlate}")
+    public ResponseEntity<Map<String, Object>> leave(@PathVariable String licensePlate) {
+        leaveService.leave(licensePlate);
         return ResponseEntity.ok(Map.of(
-                "carId", carId,
+                "licensePlate", licensePlate,
                 "success", true,
                 "message", "Car successfully left the parking spot"
         ));
