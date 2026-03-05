@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -67,6 +68,19 @@ public class AdminController {
                 "success", true,
                 "message", "Inspection record deleted successfully"
         ));
+    }
+
+    /**
+     * Get all inspections conducted by a specific admin.
+     * GET /api/admin/inspections/by-admin/{adminId}
+     */
+    @GetMapping("/by-admin/{adminId}")
+    public ResponseEntity<List<InspectionRecordResponse>> getByAdmin(@PathVariable Long adminId) {
+        List<InspectionRecordResponse> responses = adminInspectionService.getInspectionsByAdmin(adminId)
+                .stream()
+                .map(InspectionRecordResponse::new)
+                .toList();
+        return ResponseEntity.ok(responses);
     }
 }
 

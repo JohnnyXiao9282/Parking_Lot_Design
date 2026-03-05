@@ -9,7 +9,6 @@ import java.util.List;
 public interface IInspectionService {
     List<InspectionRecord> getInspectionsByParkingLot(Long parkingLotId);
     List<InspectionRecord> getLatestInspections(Long parkingLotId);
-    List<InspectionRecord> getInspectionsByAdmin(Long adminId);
     List<InspectionRecord> getInspectionsByStatus(InspectionStatus status);
     List<InspectionRecord> getInspectionsByDateRange(LocalDateTime start, LocalDateTime end);
     InspectionRecord getInspectionById(Long id);

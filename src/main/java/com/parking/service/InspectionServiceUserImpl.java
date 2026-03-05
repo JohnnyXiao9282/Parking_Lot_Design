@@ -31,10 +31,6 @@ public class InspectionServiceUserImpl implements IInspectionService {
         return inspectionRecordRepository.findLatestInspectionsByParkingLot(parkingLotId);
     }
 
-    @Override
-    public List<InspectionRecord> getInspectionsByAdmin(Long adminId) {
-        return inspectionRecordRepository.findByInspectorId(adminId);
-    }
 
     @Override
     public List<InspectionRecord> getInspectionsByStatus(InspectionStatus status) {

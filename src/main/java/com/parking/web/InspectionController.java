@@ -56,18 +56,6 @@ public class InspectionController {
         return ResponseEntity.ok(responses);
     }
 
-    /**
-     * Get all inspections conducted by a specific admin.
-     * GET /api/inspections/admin/{adminId}
-     */
-    @GetMapping("/admin/{adminId}")
-    public ResponseEntity<List<InspectionRecordResponse>> getByAdmin(@PathVariable Long adminId) {
-        List<InspectionRecordResponse> responses = inspectionService.getInspectionsByAdmin(adminId)
-                .stream()
-                .map(InspectionRecordResponse::new)
-                .toList();
-        return ResponseEntity.ok(responses);
-    }
 
     /**
      * Get all inspections by status.
