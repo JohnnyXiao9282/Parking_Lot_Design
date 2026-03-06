@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CashPayment implements Payment {
+public class CashPayment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,31 +36,4 @@ public class CashPayment implements Payment {
 
     @Column(nullable = false)
     private LocalDateTime paymentTimestamp = LocalDateTime.now();
-
-    @Override
-    public boolean processPayment(double amount) {
-        if (cashReceived >= amount) {
-            this.changeGiven = cashReceived - amount;
-            this.successful = true;
-            return true;
-        }
-        this.successful = false;
-        return false;
-    }
-
-    @Override
-    public double getAmount() {
-        return amount;
-    }
-
-    @Override
-    public String getPaymentMethod() {
-        return "CASH";
-    }
-
-    @Override
-    public boolean isSuccessful() {
-        return successful;
-    }
 }
-

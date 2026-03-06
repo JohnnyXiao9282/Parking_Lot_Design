@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "cars")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -34,11 +36,14 @@ public abstract class Car {
 
     private Integer parkedHours;
 
-    @Transient
+    // Timestamp of when the car was parked — used to compute elapsed hours
+    private LocalDateTime parkedSince;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parking_spot_id")
     private ParkingSpot parkingSpot;
 
     public abstract boolean park(ParkingSpot spot);
 
     public abstract boolean leave();
 }
-

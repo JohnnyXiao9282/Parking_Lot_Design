@@ -14,10 +14,20 @@ public interface ParkingSpotRepository extends JpaRepository<ParkingSpot, Long> 
 
     List<ParkingSpot> findByIsOccupied(boolean isOccupied);
 
+    List<ParkingSpot> findByIsSmallCarSpotOrderBySpotNumberAsc(boolean isSmallCarSpot);
+
     @Query("SELECT ps FROM ParkingSpot ps WHERE ps.level.id = :levelId AND ps.isOccupied = false")
     List<ParkingSpot> findAvailableSpotsByLevel(Long levelId);
 
     @Query("SELECT ps FROM ParkingSpot ps WHERE ps.isSmallCarSpot = :isSmallCarSpot AND ps.isOccupied = false")
     List<ParkingSpot> findAvailableSpotsByType(boolean isSmallCarSpot);
-}
 
+    @Query("SELECT ps FROM ParkingSpot ps JOIN FETCH ps.level WHERE ps.isSmallCarSpot = :isSmallCarSpot AND ps.isOccupied = false")
+    List<ParkingSpot> findAvailableSpotsByTypeWithLevel(boolean isSmallCarSpot);
+
+    @Query("SELECT COUNT(ps) FROM ParkingSpot ps WHERE ps.level.parkingLot.id = :parkingLotId")
+    int countByParkingLotId(Long parkingLotId);
+
+    @Query("SELECT COUNT(ps) FROM ParkingSpot ps WHERE ps.level.parkingLot.id = :parkingLotId AND ps.isOccupied = true")
+    int countOccupiedByParkingLotId(Long parkingLotId);
+}

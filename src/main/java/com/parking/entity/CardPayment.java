@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardPayment implements Payment {
+public class CardPayment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,28 +36,4 @@ public class CardPayment implements Payment {
 
     @Column(nullable = false)
     private LocalDateTime paymentTimestamp = LocalDateTime.now();
-
-    @Override
-    public boolean processPayment(double amount) {
-        // Simulate card processing
-        this.transactionId = "TXN" + System.currentTimeMillis();
-        this.successful = true;
-        return true;
-    }
-
-    @Override
-    public double getAmount() {
-        return amount;
-    }
-
-    @Override
-    public String getPaymentMethod() {
-        return "CARD";
-    }
-
-    @Override
-    public boolean isSuccessful() {
-        return successful;
-    }
 }
-
