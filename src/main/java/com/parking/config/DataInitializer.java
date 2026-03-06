@@ -24,7 +24,23 @@ public class DataInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         migrateEnumColumns();   // commits immediately in its own transaction
+        backfillParkedSince();  // fix parked cars with no timestamp
         seedData();             // separate transaction for JPA operations
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void backfillParkedSince() {
+        try {
+            int updated = jdbcTemplate.update(
+                "UPDATE cars SET parked_since = NOW() - INTERVAL '1 hour' " +
+                "WHERE is_parked = true AND parked_since IS NULL"
+            );
+            if (updated > 0) {
+                log.info("[DataInitializer] Backfilled parked_since for {} car(s) — set to 1 hour ago.", updated);
+            }
+        } catch (Exception e) {
+            log.debug("[DataInitializer] backfillParkedSince skipped: {}", e.getMessage());
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
