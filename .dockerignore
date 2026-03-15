@@ -1,0 +1,43 @@
+# Maven build artifacts
+target/
+*.jar
+*.class
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.iml
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
+.git/
+.gitignore
+Thumbs.db
+
+# Documentation
+*.md
+README.md
+
+# Build files
+node_modules/
+build/
+dist/
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+
+# Docker
+docker-compose*.yml
+Dockerfile
+.docker/
+
